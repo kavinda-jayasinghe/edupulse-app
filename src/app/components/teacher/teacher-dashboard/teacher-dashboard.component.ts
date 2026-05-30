@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -30,9 +30,10 @@ import { CreateClassDialogComponent } from '../../../shared/components/create-cl
   styleUrl:    './teacher-dashboard.component.scss',
 })
 export class TeacherDashboardComponent implements OnInit {
-  private api    = inject(ApiService);
-  private auth   = inject(AuthService);
-  private dialog = inject(MatDialog);
+  private api        = inject(ApiService);
+  private auth       = inject(AuthService);
+  private dialog     = inject(MatDialog);
+  private platformId = inject(PLATFORM_ID);
 
   // ── Initial load ──────────────────────────────────────────
   loading      = true;
@@ -75,6 +76,7 @@ export class TeacherDashboardComponent implements OnInit {
   // ── Dashboard ─────────────────────────────────────────────
 
   private loadOverview() {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.loading = true;
     this.api.getTeacherOverview(this.teacherId).subscribe({
       next: data => {
@@ -84,10 +86,15 @@ export class TeacherDashboardComponent implements OnInit {
           totalSubmissions: data.totalSubmissions,
         };
         this.classOverview = data.classes;
+        this.error         = '';
         this.loading       = false;
       },
-      error: () => {
-        this.error   = 'Could not load teacher data. Is the backend running?';
+      error: (err) => {
+        if (err?.status === 403) {
+          this.error = 'Access denied: this account does not have teacher permissions. Please log in with a teacher account.';
+        } else {
+          this.error = 'Could not load teacher data. Is the backend running?';
+        }
         this.loading = false;
       },
     });
