@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* ── Shared utilities ─────────────────────────────────── */
+.center-spin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffb74d;
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.no-data {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.45);
+  padding: 32px 0;
+  font-size: 14px;
+}

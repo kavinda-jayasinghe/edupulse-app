@@ -1,0 +1,103 @@
+.rankings-page {
+  min-height: calc(100vh - 64px);
+  background: #f4f6fb;
+}
+
+.page-header {
+  background: white;
+  padding: 28px 32px;
+  border-bottom: 1px solid #e0e0e0;
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a237e;
+    mat-icon { color: #f59e0b; }
+  }
+
+  p { margin: 0; color: rgba(0,0,0,0.5); font-size: 14px; }
+}
+
+.page-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Podium ──────────────────────────────────────────────── */
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px 0 0;
+}
+
+.podium-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 140px;
+
+  .medal    { font-size: 36px; margin-bottom: 6px; }
+  .podium-name  { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .podium-score { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+
+  .podium-block {
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+
+    &.rank1 { height: 80px; background: linear-gradient(180deg, #fbbf24, #f59e0b); }
+    &.rank2 { height: 56px; background: linear-gradient(180deg, #d1d5db, #9ca3af); }
+    &.rank3 { height: 42px; background: linear-gradient(180deg, #d97706, #b45309); }
+  }
+
+  &.gold   .podium-score { color: #d97706; }
+  &.silver .podium-score { color: #6b7280; }
+  &.bronze .podium-score { color: #b45309; }
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.table-card {
+  border-radius: 14px !important;
+
+  .rank-table {
+    width: 100%;
+    th { font-weight: 700; font-size: 12px; color: rgba(0,0,0,0.55); }
+  }
+
+  .rank-col { font-size: 20px; width: 60px; }
+
+  .highlight-row {
+    background: linear-gradient(135deg, #ede7f6, #e8eaf6);
+    font-weight: 600;
+  }
+
+  .name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &.me { font-weight: 700; }
+  }
+
+  .you-badge {
+    background: #3f51b5;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .total-score { color: #3f51b5; font-size: 15px; }
+}

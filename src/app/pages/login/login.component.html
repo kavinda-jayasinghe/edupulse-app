@@ -1,0 +1,86 @@
+<div class="auth-shell">
+
+  <!-- ── Left Brand Panel ── -->
+  <div class="brand-panel">
+    <div class="brand-inner">
+      <div class="brand-logo">
+        <mat-icon>school</mat-icon>
+        <span>EduPulse</span>
+      </div>
+      <h2 class="brand-tagline">Empowering students,<br>one question at a time.</h2>
+      <p class="brand-sub">Track your progress, compete with peers,<br>and unlock your potential.</p>
+
+      <!-- Decorative dot grid -->
+      <div class="dot-decoration">
+        <span *ngFor="let d of dots" class="dec-dot" [class.lit]="d"></span>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <mat-icon>description</mat-icon> MCQ Exam Papers
+        </div>
+        <div class="feature-item">
+          <mat-icon>leaderboard</mat-icon> Live Rankings
+        </div>
+        <div class="feature-item">
+          <mat-icon>grain</mat-icon> Gamified Progress
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right Form Panel ── -->
+  <div class="form-panel">
+    <div class="form-card">
+
+      <div class="form-header">
+        <h1>Welcome back!</h1>
+        <p>Sign in to your EduPulse account</p>
+      </div>
+
+      <!-- Error alert -->
+      <div class="alert-error" *ngIf="error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mobile Number</mat-label>
+          <input matInput type="tel" formControlName="mobile" placeholder="07XXXXXXXX" autocomplete="tel">
+          <mat-icon matPrefix>phone</mat-icon>
+          <mat-error>{{ mobileErr }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="showPass ? 'text' : 'password'" formControlName="password" autocomplete="current-password">
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="showPass = !showPass" [attr.aria-label]="'Toggle password'">
+            <mat-icon>{{ showPass ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error>{{ passErr }}</mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading">
+          <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+          <span *ngIf="!loading">Sign In</span>
+        </button>
+
+      </form>
+
+      <div class="form-footer">
+        <span>Don't have an account?</span>
+        <a routerLink="/signup">Create account</a>
+      </div>
+
+      <div class="demo-hint">
+        <mat-icon>info_outline</mat-icon>
+        Demo: <strong>0771234567</strong> / <strong>password123</strong>
+      </div>
+
+    </div>
+  </div>
+
+</div>

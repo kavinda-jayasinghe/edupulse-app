@@ -1,0 +1,93 @@
+<div class="exams-page">
+  <div class="page-header">
+    <div>
+      <h1><mat-icon>description</mat-icon> Exams</h1>
+      <p>Browse available papers and review your results</p>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="center-spin" *ngIf="loading"><mat-spinner diameter="48"></mat-spinner></div>
+    <div class="error-banner" *ngIf="error"><mat-icon>warning</mat-icon> {{ error }}</div>
+
+    <ng-container *ngIf="!loading && !error">
+
+      <!-- Available -->
+      <section *ngIf="available.length">
+        <h2 class="section-title"><span class="dot dot-green"></span> Available Now</h2>
+        <div class="exam-grid">
+          <mat-card *ngFor="let exam of available" class="exam-card available-card">
+            <mat-card-header>
+              <div mat-card-avatar class="subject-avatar">{{ exam.subject }}</div>
+              <mat-card-title>{{ exam.title }}</mat-card-title>
+              <mat-card-subtitle>Due: {{ exam.due_date }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="exam-meta">
+                <span><mat-icon>quiz</mat-icon> {{ exam.question_count }} questions</span>
+                <span><mat-icon>schedule</mat-icon> {{ exam.duration }}</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="primary">
+                <mat-icon>play_arrow</mat-icon> Start Exam
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </section>
+
+      <!-- Upcoming -->
+      <section *ngIf="upcoming.length">
+        <h2 class="section-title"><span class="dot dot-amber"></span> Upcoming</h2>
+        <div class="exam-grid">
+          <mat-card *ngFor="let exam of upcoming" class="exam-card upcoming-card">
+            <mat-card-header>
+              <div mat-card-avatar class="subject-avatar">{{ exam.subject }}</div>
+              <mat-card-title>{{ exam.title }}</mat-card-title>
+              <mat-card-subtitle>Opens: {{ exam.due_date }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="exam-meta">
+                <span><mat-icon>quiz</mat-icon> {{ exam.question_count }} questions</span>
+                <span><mat-icon>schedule</mat-icon> {{ exam.duration }}</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button disabled><mat-icon>lock</mat-icon> Not Yet Open</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </section>
+
+      <!-- Completed -->
+      <section *ngIf="completed.length">
+        <h2 class="section-title"><span class="dot dot-blue"></span> Completed</h2>
+        <div class="exam-grid">
+          <mat-card *ngFor="let exam of completed" class="exam-card completed-card">
+            <mat-card-header>
+              <div mat-card-avatar class="subject-avatar">{{ exam.subject }}</div>
+              <mat-card-title>{{ exam.title }}</mat-card-title>
+              <mat-card-subtitle>
+                Score: {{ exam.score }}/{{ exam.total_marks }} &nbsp;·&nbsp; {{ scorePercent(exam.score, exam.total_marks) }}%
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="score-bar-wrap">
+                <div class="score-bar" [style.width.%]="scorePercent(exam.score, exam.total_marks)"></div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary"><mat-icon>visibility</mat-icon> View Results</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </section>
+
+      <div *ngIf="!available.length && !upcoming.length && !completed.length" class="no-data">
+        No exams assigned to your class yet.
+      </div>
+
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="marksheet-container">
+  <h2>MCQ Answer Sheet</h2>
+  
+  <div class="question-grid">
+    <div *ngFor="let row of getQuestionRows()" class="question-row">
+      <div *ngFor="let question of row" class="question-group">
+        <span class="question-number">({{question.number.toString().padStart(2, '0')}})</span>
+        <div class="options-container">
+          <div *ngFor="let option of question.options" 
+               class="option-button"
+               [class.selected]="question.selectedOption === option"
+               (click)="selectOption(question, option)">
+            <span class="option-number">{{option}}</span>
+            <span class="option-x" *ngIf="question.selectedOption === option">X</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

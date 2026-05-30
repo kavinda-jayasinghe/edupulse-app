@@ -1,0 +1,139 @@
+<div class="dashboard">
+
+  <!-- ── Welcome Banner ── -->
+  <section class="welcome-banner">
+    <div class="welcome-inner">
+      <div class="welcome-text">
+        <h1>Welcome back, <span class="highlight">{{ studentName }}</span> 👋</h1>
+        <p class="sub"><mat-icon>class</mat-icon> {{ studentClass }}</p>
+      </div>
+      <button mat-raised-button color="accent" routerLink="/exams" class="cta-btn">
+        <mat-icon>play_circle</mat-icon> Start New Exam
+      </button>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div class="center-spin" *ngIf="loading">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <!-- Error -->
+  <div class="error-banner" *ngIf="error && !loading">
+    <mat-icon>warning</mat-icon> {{ error }}
+  </div>
+
+  <div class="content" *ngIf="!loading">
+
+    <!-- ── Stats Row ── -->
+    <div class="stats-grid">
+      <mat-card class="stat-card card-blue">
+        <mat-icon>description</mat-icon>
+        <div class="stat-val">{{ totalExams }}</div>
+        <div class="stat-lbl">Exams Taken</div>
+      </mat-card>
+      <mat-card class="stat-card card-amber">
+        <mat-icon>emoji_events</mat-icon>
+        <div class="stat-val">{{ currentRank ? '#' + currentRank : '—' }}</div>
+        <div class="stat-lbl">Class Rank</div>
+      </mat-card>
+      <mat-card class="stat-card card-green">
+        <mat-icon>stars</mat-icon>
+        <div class="stat-val">{{ totalScore }}</div>
+        <div class="stat-lbl">Total Score</div>
+      </mat-card>
+      <mat-card class="stat-card card-purple">
+        <mat-icon>grain</mat-icon>
+        <div class="stat-val">{{ totalDots }}</div>
+        <div class="stat-lbl">Questions Done</div>
+      </mat-card>
+    </div>
+
+    <!-- ── Middle Row ── -->
+    <div class="middle-grid">
+
+      <!-- Gamification Dots -->
+      <mat-card class="dots-card">
+        <mat-card-header>
+          <div mat-card-avatar class="card-avatar avatar-purple"><mat-icon>grain</mat-icon></div>
+          <mat-card-title>Progress Journey</mat-card-title>
+          <mat-card-subtitle>{{ totalDots }} / {{ maxDots }} questions answered</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="dots-grid">
+            <span *ngFor="let filled of dotsArray" class="dot" [class.dot-on]="filled"></span>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="dotsProgress" color="accent" class="progress-bar"></mat-progress-bar>
+          <p class="progress-caption">{{ dotsProgress | number:'1.0-0' }}% toward 500-question milestone</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Class Rankings Mini -->
+      <mat-card class="rankings-card">
+        <mat-card-header>
+          <div mat-card-avatar class="card-avatar avatar-amber"><mat-icon>leaderboard</mat-icon></div>
+          <mat-card-title>Class Rankings</mat-card-title>
+          <mat-card-subtitle>Top performers</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="ranking-list">
+            <div *ngFor="let entry of topRankings" class="ranking-row" [class.is-me]="entry.isCurrentUser">
+              <span class="medal">{{ rankMedal(entry.rank) }}</span>
+              <span class="r-name">{{ entry.name }}</span>
+              <span class="r-score">{{ entry.total_score }}</span>
+            </div>
+            <div *ngIf="!topRankings.length" class="no-data">No ranking data yet</div>
+          </div>
+          <button mat-button color="primary" routerLink="/rankings" class="view-all">
+            View Full Rankings <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- ── Recent Exams Table ── -->
+    <mat-card class="exams-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar avatar-blue"><mat-icon>history</mat-icon></div>
+        <mat-card-title>Recent Exams</mat-card-title>
+        <mat-card-subtitle>Your latest results</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="!recentExams.length" class="no-data">No exams taken yet.</div>
+        <table mat-table [dataSource]="recentExams" class="exam-table" *ngIf="recentExams.length">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Exam Paper</th>
+            <td mat-cell *matCellDef="let e">
+              <div class="exam-title">
+                <span class="subject-pill">{{ e.subject }}</span> {{ e.title }}
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef>Score</th>
+            <td mat-cell *matCellDef="let e">
+              <span class="score-chip">{{ e.score }}/{{ e.total_marks }}</span>
+              <span class="pct"> {{ scorePercent(e.score, e.total_marks) }}%</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="rank">
+            <th mat-header-cell *matHeaderCellDef>Rank</th>
+            <td mat-cell *matCellDef="let e"><span class="rank-cell">{{ rankMedal(e.rank_position) }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let e" class="date-cell">{{ e.submitted_at | date:'mediumDate' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="exam-row"></tr>
+        </table>
+        <div class="table-footer">
+          <button mat-button color="primary" routerLink="/exams">
+            View All Exams <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

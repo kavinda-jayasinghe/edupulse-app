@@ -1,0 +1,37 @@
+<div class="contribution-calendar">
+
+  <!-- Top Month Labels -->
+  <div class="month-labels">
+    <div class="spacer"></div>
+    <div class="months-track">
+      <div *ngFor="let month of getMonthLabels()"
+           class="month-label"
+           [style.left.px]="month.offset * 16">
+        {{ month.label }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="calendar-body">
+    
+    <!-- Day of week labels -->
+    <div class="day-labels">
+      <div *ngFor="let day of daysOfWeek" class="day-label">
+        {{ day }}
+      </div>
+    </div>
+
+    <!-- Contribution cells -->
+    <div class="weeks-container">
+      <div *ngFor="let week of getWeekColumns()" class="week">
+        <div *ngFor="let day of week"
+             class="day"
+             [style.backgroundColor]="getColor(day.count)"
+             [title]="day.date.toDateString() + ': ' + day.count + ' contributions'">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.\\\\mvnw.cmd compile *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\PROJECT_1\\\\front-end\\\\src\\\\app\" -Recurse -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(./mvnw.cmd compile *)",
+      "Bash(./mvnw.cmd clean *)",
+      "Bash(Get-Content \"d:\\\\PROJECT_1\\\\front-end\\\\src\\\\app\\\\components\\\\teacher\\\\teacher-dashboard\\\\teacher-dashboard.component.html\")"
+    ],
+    "additionalDirectories": [
+      "D:\\PROJECT_1\\edu-pulse-server",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\entity",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\converter",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\repository",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\security",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\service",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\controller",
+      "D:\\PROJECT_1\\edupulse-server\\edupulse\\src\\main\\java\\com\\info_labs\\edupulse\\config"
+    ]
+  }
+}

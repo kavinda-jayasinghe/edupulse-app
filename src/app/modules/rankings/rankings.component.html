@@ -1,0 +1,76 @@
+<div class="rankings-page">
+  <div class="page-header">
+    <h1><mat-icon>leaderboard</mat-icon> Class Rankings</h1>
+    <p>Overall standings based on total score across all exams</p>
+  </div>
+
+  <div class="page-content">
+    <div class="center-spin" *ngIf="loading"><mat-spinner diameter="48"></mat-spinner></div>
+    <div class="error-banner" *ngIf="error"><mat-icon>warning</mat-icon> {{ error }}</div>
+
+    <ng-container *ngIf="!loading && leaderboard.length >= 3">
+      <!-- Podium -->
+      <div class="podium">
+        <div class="podium-card silver">
+          <div class="medal">🥈</div>
+          <div class="podium-name">{{ leaderboard[1].name }}</div>
+          <div class="podium-score">{{ leaderboard[1].total_score }}</div>
+          <div class="podium-block rank2"></div>
+        </div>
+        <div class="podium-card gold">
+          <div class="medal">🥇</div>
+          <div class="podium-name">{{ leaderboard[0].name }}</div>
+          <div class="podium-score">{{ leaderboard[0].total_score }}</div>
+          <div class="podium-block rank1"></div>
+        </div>
+        <div class="podium-card bronze">
+          <div class="medal">🥉</div>
+          <div class="podium-name">{{ leaderboard[2].name }}</div>
+          <div class="podium-score">{{ leaderboard[2].total_score }}</div>
+          <div class="podium-block rank3"></div>
+        </div>
+      </div>
+    </ng-container>
+
+    <mat-card class="table-card" *ngIf="!loading && leaderboard.length">
+      <mat-card-header><mat-card-title>Full Leaderboard</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="leaderboard" class="rank-table">
+
+          <ng-container matColumnDef="rank">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let e" class="rank-col">{{ rankMedal(e.rank) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Student</th>
+            <td mat-cell *matCellDef="let e">
+              <span class="name-cell" [class.me]="e.id === currentUserId">
+                {{ e.name }}
+                <span *ngIf="e.id === currentUserId" class="you-badge">You</span>
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="exams">
+            <th mat-header-cell *matHeaderCellDef>Exams</th>
+            <td mat-cell *matCellDef="let e">{{ e.exams_taken }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="avgScore">
+            <th mat-header-cell *matHeaderCellDef>Avg %</th>
+            <td mat-cell *matCellDef="let e">{{ e.avg_pct ?? '—' }}%</td>
+          </ng-container>
+
+          <ng-container matColumnDef="totalScore">
+            <th mat-header-cell *matHeaderCellDef>Total Score</th>
+            <td mat-cell *matCellDef="let e"><strong class="total-score">{{ e.total_score }}</strong></td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;" [class.highlight-row]="row.id === currentUserId"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

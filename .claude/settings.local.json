@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"d:/PROJECT_1/back-end\" -type f | sort)",
+      "Read(//d/PROJECT_1/back-end/**)",
+      "Bash(ls -la \"d:/PROJECT_1/\" | head -20)",
+      "Read(//d/PROJECT_1/**)"
+    ]
+  }
+}

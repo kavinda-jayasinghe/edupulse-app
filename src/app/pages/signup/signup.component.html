@@ -1,0 +1,100 @@
+<div class="auth-shell">
+
+  <!-- ── Left Brand Panel ── -->
+  <div class="brand-panel">
+    <div class="brand-inner">
+      <div class="brand-logo">
+        <mat-icon>school</mat-icon>
+        <span>EduPulse</span>
+      </div>
+      <h2 class="brand-tagline">Join thousands of<br>students learning today.</h2>
+      <p class="brand-sub">Create your free account and start<br>competing, improving and achieving.</p>
+
+      <div class="dot-decoration">
+        <span *ngFor="let d of dots" class="dec-dot" [class.lit]="d"></span>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature-item"><mat-icon>check_circle</mat-icon> Auto-graded MCQ exams</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon> Real-time class rankings</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon> Personal progress tracker</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right Form Panel ── -->
+  <div class="form-panel">
+    <div class="form-card">
+
+      <!-- Success State -->
+      <div class="success-state" *ngIf="success">
+        <div class="success-icon"><mat-icon>check_circle</mat-icon></div>
+        <h2>Account Created!</h2>
+        <p>Your account has been created successfully. You can now sign in.</p>
+        <button mat-raised-button color="primary" routerLink="/login" class="submit-btn">
+          Go to Sign In
+        </button>
+      </div>
+
+      <!-- Form State -->
+      <ng-container *ngIf="!success">
+        <div class="form-header">
+          <h1>Create account</h1>
+          <p>Join EduPulse and start your learning journey</p>
+        </div>
+
+        <div class="alert-error" *ngIf="error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="name" placeholder="Amal Perera" autocomplete="name">
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <mat-error>{{ fieldErr('name', 'Full name') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput type="tel" formControlName="mobile" placeholder="07XXXXXXXX" autocomplete="tel">
+            <mat-icon matPrefix>phone</mat-icon>
+            <mat-error>{{ fieldErr('mobile', 'Mobile number') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="showPass ? 'text' : 'password'" formControlName="password" autocomplete="new-password">
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <button mat-icon-button matSuffix type="button" (click)="showPass = !showPass">
+              <mat-icon>{{ showPass ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error>{{ fieldErr('password', 'Password') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput [type]="showPass ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password">
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <mat-error>{{ confirmErr }}</mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading">
+            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Create Account</span>
+          </button>
+
+        </form>
+
+        <div class="form-footer">
+          <span>Already have an account?</span>
+          <a routerLink="/login">Sign in</a>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+
+</div>

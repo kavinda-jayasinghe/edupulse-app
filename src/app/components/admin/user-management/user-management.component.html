@@ -1,0 +1,179 @@
+<div class="admin-dashboard">
+
+  <!-- ── Admin Banner ── -->
+  <section class="admin-banner">
+    <div class="banner-inner">
+      <div class="banner-text">
+        <div class="admin-badge"><mat-icon>shield</mat-icon> ADMIN PANEL</div>
+        <h1>Welcome, <span class="highlight">{{ adminName }}</span></h1>
+        <p class="sub">EduPulse Management Console</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div class="center-spin" *ngIf="loading">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <!-- Error -->
+  <div class="error-banner" *ngIf="error && !loading">
+    <mat-icon>warning</mat-icon> {{ error }}
+  </div>
+
+  <div class="content" *ngIf="!loading && !error">
+
+    <!-- ── User Management ── -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar avatar-rose"><mat-icon>manage_accounts</mat-icon></div>
+        <mat-card-title>User Management</mat-card-title>
+        <mat-card-subtitle>Search, change roles, enable/disable or delete users</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+
+        <!-- Search bar -->
+        <div class="search-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search by mobile number</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput [(ngModel)]="searchMobile" placeholder="07XXXXXXXX"
+                   (keydown.enter)="searchUser()">
+          </mat-form-field>
+          <button mat-raised-button color="primary"
+                  (click)="searchUser()"
+                  [disabled]="searching || !searchMobile.trim()">
+            <mat-icon>search</mat-icon> Search
+          </button>
+        </div>
+
+        <!-- Search error -->
+        <div class="search-error" *ngIf="searchError">
+          <mat-icon>error_outline</mat-icon> {{ searchError }}
+        </div>
+
+        <!-- Search result card -->
+        <div class="user-result-card" *ngIf="searchResult">
+          <div class="result-info">
+            <div class="result-avatar"><mat-icon>account_circle</mat-icon></div>
+            <div class="result-details">
+              <div class="result-name">{{ searchResult.name }}</div>
+              <div class="result-meta">
+                <span class="mono">{{ searchResult.mobile }}</span>
+                <span [class]="'type-badge type-' + searchResult.profileType.toLowerCase()">
+                  {{ searchResult.profileType }}
+                </span>
+                <span [class]="searchResult.enabled ? 'status-active' : 'status-disabled'">
+                  <mat-icon>{{ searchResult.enabled ? 'check_circle' : 'block' }}</mat-icon>
+                  {{ searchResult.enabled ? 'Active' : 'Disabled' }}
+                </span>
+              </div>
+              <div class="result-classes" *ngIf="searchResult.classes?.length">
+                <mat-icon>class</mat-icon> {{ classNames(searchResult.classes) }}
+              </div>
+            </div>
+          </div>
+          <div class="result-actions">
+            <button mat-stroked-button color="primary"
+                    *ngIf="searchResult.profileType === 'STUDENT'"
+                    (click)="changeProfileType(searchResult.id, 'TEACHER', searchResult.name)">
+              <mat-icon>school</mat-icon> Make Teacher
+            </button>
+            <button mat-stroked-button color="primary"
+                    *ngIf="searchResult.profileType === 'TEACHER'"
+                    (click)="changeProfileType(searchResult.id, 'STUDENT', searchResult.name)">
+              <mat-icon>person</mat-icon> Make Student
+            </button>
+            <button mat-stroked-button [color]="searchResult.enabled ? 'warn' : 'primary'"
+                    (click)="toggleEnabled(searchResult.id, searchResult.name, searchResult.enabled)">
+              <mat-icon>{{ searchResult.enabled ? 'block' : 'check_circle' }}</mat-icon>
+              {{ searchResult.enabled ? 'Disable' : 'Enable' }}
+            </button>
+            <button mat-stroked-button color="warn"
+                    (click)="deleteUser(searchResult.id, searchResult.name)">
+              <mat-icon>delete</mat-icon> Delete
+            </button>
+          </div>
+        </div>
+
+        <mat-divider class="users-divider"></mat-divider>
+
+        <!-- All users table -->
+        <div class="users-section-title">All Students &amp; Teachers</div>
+
+        <div *ngIf="!allUsers.length" class="no-data">No users found.</div>
+
+        <table mat-table [dataSource]="allUsers" class="users-table" *ngIf="allUsers.length">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let u" class="name-cell">{{ u.name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="mobile">
+            <th mat-header-cell *matHeaderCellDef>Mobile</th>
+            <td mat-cell *matCellDef="let u" class="mono">{{ u.mobile }}</td>
+          </ng-container>
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <td mat-cell *matCellDef="let u">
+              <span [class]="'type-badge type-' + u.profileType.toLowerCase()">{{ u.profileType }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let u">
+              <span [class]="u.enabled ? 'status-active' : 'status-disabled'">
+                {{ u.enabled ? 'Active' : 'Disabled' }}
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let u">
+              <div class="action-btns">
+                <button mat-icon-button color="primary"
+                        matTooltip="Promote to Teacher"
+                        *ngIf="u.profileType === 'STUDENT'"
+                        (click)="changeProfileType(u.id, 'TEACHER', u.name)">
+                  <mat-icon>school</mat-icon>
+                </button>
+                <button mat-icon-button color="primary"
+                        matTooltip="Demote to Student"
+                        *ngIf="u.profileType === 'TEACHER'"
+                        (click)="changeProfileType(u.id, 'STUDENT', u.name)">
+                  <mat-icon>person</mat-icon>
+                </button>
+                <button mat-icon-button
+                        [color]="u.enabled ? 'warn' : 'primary'"
+                        [matTooltip]="u.enabled ? 'Disable Account' : 'Enable Account'"
+                        (click)="toggleEnabled(u.id, u.name, u.enabled)">
+                  <mat-icon>{{ u.enabled ? 'block' : 'check_circle' }}</mat-icon>
+                </button>
+                <button mat-icon-button color="warn"
+                        matTooltip="Delete User"
+                        (click)="deleteUser(u.id, u.name)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="userColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: userColumns;"
+              class="user-row" [class.row-disabled]="!row.enabled"></tr>
+        </table>
+
+        <!-- Paginator -->
+        <mat-paginator
+          [length]="totalUsers"
+          [pageSize]="pageSize"
+          [pageIndex]="currentPage"
+          [pageSizeOptions]="[5, 10, 20]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+          class="users-paginator">
+        </mat-paginator>
+
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

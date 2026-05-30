@@ -1,0 +1,276 @@
+<div class="teacher-dashboard">
+
+  <!-- ── Teacher Banner ── -->
+  <section class="teacher-banner">
+    <div class="banner-inner">
+      <div class="banner-text">
+        <div class="teacher-badge"><mat-icon>school</mat-icon> TEACHER PANEL</div>
+        <h1>Welcome, <span class="highlight">{{ teacherName }}</span></h1>
+        <p class="sub">Class Management &amp; Student Progress</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Initial loading ── -->
+  <div class="center-spin" *ngIf="loading">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <!-- ── Initial error ── -->
+  <div class="error-banner" *ngIf="error && !loading">
+    <mat-icon>warning</mat-icon> {{ error }}
+  </div>
+
+  <!-- ════════════════════════════════════════
+       DASHBOARD VIEW
+  ════════════════════════════════════════ -->
+      <!-- Classes section header -->
+
+  <div class="content" *ngIf="!loading && !error && view === 'dashboard'">
+
+    <!-- Stats row -->
+    <div class="stats-grid">
+      <mat-card class="stat-card card-amber">
+        <mat-icon>class</mat-icon>
+        <div class="stat-val">{{ stats?.totalClasses }}</div>
+        <div class="stat-lbl">My Classes</div>
+      </mat-card>
+      <mat-card class="stat-card card-indigo">
+        <mat-icon>group</mat-icon>
+        <div class="stat-val">{{ stats?.totalStudents }}</div>
+        <div class="stat-lbl">My Students</div>
+      </mat-card>
+      <mat-card class="stat-card card-green">
+        <mat-icon>fact_check</mat-icon>
+        <div class="stat-val">{{ stats?.totalSubmissions }}</div>
+        <div class="stat-lbl">Submissions</div>
+      </mat-card>
+      <mat-card class="stat-card card-teal create-card" (click)="openCreateClassDialog()">
+        <mat-icon>add_circle</mat-icon>
+        <div class="stat-val">+</div>
+        <div class="stat-lbl">New Class</div>
+      </mat-card>
+    </div>
+
+
+
+    <!-- Class tiles -->
+    <div class="class-grid" *ngIf="classOverview.length > 0">
+      <div class="class-tile" *ngFor="let cls of classOverview" (click)="openClassDetail(cls)">
+        <div class="tile-icon">
+          <mat-icon>school</mat-icon>
+        </div>
+        <div class="tile-info">
+          <div class="tile-name">{{ cls.name }}</div>
+          <div class="tile-meta">
+            <span><mat-icon>group</mat-icon> {{ cls.studentCount }} students</span>
+            <span *ngIf="cls.subject"><mat-icon>subject</mat-icon> {{ cls.subject }}</span>
+            <span *ngIf="cls.classCode" class="code-chip">
+              <mat-icon>vpn_key</mat-icon> {{ cls.classCode }}
+            </span>
+          </div>
+        </div>
+        <mat-icon class="tile-arrow">chevron_right</mat-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       CLASS DETAIL VIEW
+  ════════════════════════════════════════ -->
+  <div class="content" *ngIf="!loading && !error && view === 'class-detail'">
+
+    <!-- Detail loading -->
+    <div class="center-spin" *ngIf="classDetailLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Detail error -->
+    <div class="error-banner" *ngIf="classDetailError && !classDetailLoading">
+      <mat-icon>warning</mat-icon> {{ classDetailError }}
+    </div>
+
+    <ng-container *ngIf="classDetail && !classDetailLoading">
+
+      <!-- Detail header row -->
+      <div class="detail-header">
+        <button mat-icon-button class="back-btn" (click)="closeClassDetail()" matTooltip="Back to dashboard">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="detail-title-wrap">
+          <h2 class="detail-title">{{ classDetail.name }}</h2>
+          <div class="detail-badges">
+            <span class="badge code-badge" *ngIf="classDetail.classCode">
+              <mat-icon>vpn_key</mat-icon> {{ classDetail.classCode }}
+            </span>
+            <span class="badge subject-badge" *ngIf="classDetail.subject">
+              <mat-icon>subject</mat-icon> {{ classDetail.subject }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Students Card ── -->
+      <mat-card class="section-card">
+        <mat-card-header>
+          <div class="card-avatar avatar-indigo" mat-card-avatar>
+            <mat-icon>group</mat-icon>
+          </div>
+          <mat-card-title>
+            Students
+            <span class="count-chip">{{ classDetail.students?.length ?? 0 }}</span>
+          </mat-card-title>
+          <div class="card-hdr-action">
+            <button mat-stroked-button (click)="showAddStudentForm = !showAddStudentForm">
+              <mat-icon>person_add</mat-icon> Add Student
+            </button>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <!-- Add student inline form -->
+          <div class="inline-form" *ngIf="showAddStudentForm">
+            <mat-form-field appearance="outline" class="mobile-field">
+              <mat-label>Student Mobile Number</mat-label>
+              <input matInput [(ngModel)]="addStudentMobile"
+                     placeholder="07X XXXXXXX"
+                     (keydown.enter)="addStudent()">
+              <mat-icon matSuffix>phone</mat-icon>
+            </mat-form-field>
+            <button mat-raised-button color="primary"
+                    [disabled]="addStudentLoading || !addStudentMobile.trim()"
+                    (click)="addStudent()">
+              <mat-icon>add</mat-icon>
+              {{ addStudentLoading ? 'Adding…' : 'Add' }}
+            </button>
+            <button mat-icon-button
+                    (click)="showAddStudentForm = false; addStudentMobile = ''; addStudentError = ''">
+              <mat-icon>close</mat-icon>
+            </button>
+            <p class="inline-error" *ngIf="addStudentError">{{ addStudentError }}</p>
+          </div>
+
+          <!-- Students table -->
+          <table mat-table [dataSource]="classDetail.students" class="detail-table"
+                 *ngIf="classDetail.students?.length > 0">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let s">{{ s.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="mobile">
+              <th mat-header-cell *matHeaderCellDef>Mobile</th>
+              <td mat-cell *matCellDef="let s" class="mono">{{ s.mobile }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let s" class="action-cell">
+                <button mat-icon-button color="warn" (click)="confirmRemoveStudent(s)"
+                        matTooltip="Remove from class">
+                  <mat-icon>person_remove</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="studentColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: studentColumns;" class="detail-row"></tr>
+          </table>
+
+          <div class="no-data" *ngIf="classDetail.students?.length === 0">
+            <mat-icon>group_off</mat-icon>
+            <span>No students enrolled yet. Add some using the button above.</span>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+      <!-- ── Assignments Card ── -->
+      <mat-card class="section-card">
+        <mat-card-header>
+          <div class="card-avatar avatar-amber" mat-card-avatar>
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <mat-card-title>
+            Assignments
+            <span class="count-chip">{{ classDetail.assignments?.length ?? 0 }}</span>
+          </mat-card-title>
+          <div class="card-hdr-action">
+            <button mat-stroked-button (click)="showAddAssignmentForm = !showAddAssignmentForm">
+              <mat-icon>add</mat-icon> New Assignment
+            </button>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <!-- Add assignment inline form -->
+          <div class="inline-form assignment-form" *ngIf="showAddAssignmentForm">
+            <mat-form-field appearance="outline" class="full-field">
+              <mat-label>Title</mat-label>
+              <input matInput [(ngModel)]="assignmentForm.title" placeholder="Assignment title">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-field">
+              <mat-label>Description (Optional)</mat-label>
+              <textarea matInput [(ngModel)]="assignmentForm.description"
+                        rows="3" placeholder="Instructions, links, or notes…"></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Due Date (Optional)</mat-label>
+              <input matInput type="date" [(ngModel)]="assignmentForm.dueDate">
+              <mat-icon matSuffix>event</mat-icon>
+            </mat-form-field>
+            <div class="form-actions">
+              <button mat-raised-button color="primary"
+                      [disabled]="addAssignmentLoading || !assignmentForm.title.trim()"
+                      (click)="createAssignment()">
+                <mat-icon>check</mat-icon>
+                {{ addAssignmentLoading ? 'Creating…' : 'Create' }}
+              </button>
+              <button mat-stroked-button
+                      (click)="showAddAssignmentForm = false; assignmentForm = { title: '', description: '', dueDate: '' }">
+                Cancel
+              </button>
+            </div>
+            <p class="inline-error" *ngIf="addAssignmentError">{{ addAssignmentError }}</p>
+          </div>
+
+          <!-- Assignments list -->
+          <div class="assignment-list" *ngIf="classDetail.assignments?.length > 0">
+            <div class="assignment-item" *ngFor="let a of classDetail.assignments">
+              <div class="asgn-icon">
+                <mat-icon>description</mat-icon>
+              </div>
+              <div class="asgn-body">
+                <div class="asgn-title">{{ a.title }}</div>
+                <div class="asgn-meta">
+                  <span *ngIf="a.dueDate" class="due-chip">
+                    <mat-icon>event</mat-icon> Due {{ a.dueDate }}
+                  </span>
+                  <span class="created-chip">
+                    <mat-icon>calendar_today</mat-icon> {{ a.createdAt }}
+                  </span>
+                </div>
+                <p class="asgn-desc" *ngIf="a.description">{{ a.description }}</p>
+              </div>
+              <button mat-icon-button color="warn" (click)="confirmDeleteAssignment(a)"
+                      matTooltip="Delete assignment">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="no-data" *ngIf="classDetail.assignments?.length === 0">
+            <mat-icon>assignment_late</mat-icon>
+            <span>No assignments yet. Create one using the button above.</span>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+    </ng-container>
+  </div>
+
+</div>

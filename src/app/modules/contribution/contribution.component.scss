@@ -1,0 +1,75 @@
+.contribution-calendar {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-left: 30px;
+}
+
+.month-labels {
+  position: relative;
+  height: 20px;
+
+  .spacer {
+    width: 25px;
+    height: 100%;
+    float: left;
+  }
+
+  .months-track {
+    position: relative;
+    display: block;
+    height: 100%;
+  }
+
+  .month-label {
+    position: absolute;
+    color: #767676;
+    font-size: 10px;
+  }
+}
+
+.calendar-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.day-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 110px;
+
+  .day-label {
+    height: 12px;
+    margin-bottom: 4px;
+    color: #767676;
+  }
+}
+
+.weeks-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2px;
+}
+
+.day {
+  width: 8px;
+  height: 8px;
+  padding: 1px;
+  border-radius: 2px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: outline 0.2s;
+
+  &:hover {
+    outline: 1px solid rgba(0, 0, 0, 0.3);
+  }
+}
