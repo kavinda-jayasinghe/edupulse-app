@@ -1,0 +1,195 @@
+.asgn-dialog {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Dialog title ─────────────────────────────────────── */
+.dialog-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f3f4f6;
+
+  .title-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    mat-icon { color: white; font-size: 24px; height: 24px; width: 24px; }
+  }
+
+  .title-text {
+    flex: 1;
+
+    h2 { margin: 0 0 2px; font-size: 18px; font-weight: 700; color: #1e293b; }
+
+    .dialog-subtitle { margin: 0; font-size: 13px; color: rgba(0, 0, 0, 0.5); }
+  }
+
+  .close-btn { color: rgba(0, 0, 0, 0.4); flex-shrink: 0; }
+}
+
+/* ── Content ──────────────────────────────────────────── */
+mat-dialog-content {
+  display: flex !important;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 24px 8px !important;
+  min-width: 480px;
+  max-height: 68vh;
+  overflow-y: auto;
+}
+
+.full-field { width: 100%; }
+.date-field { max-width: 220px; }
+
+/* ── Attachments ──────────────────────────────────────── */
+.attach-section {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.attach-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 10px;
+
+  mat-icon { font-size: 18px; height: 18px; width: 18px; color: #6b7280; }
+
+  .attach-count {
+    font-weight: 400;
+    color: #6b7280;
+    font-size: 12px;
+  }
+}
+
+.drop-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  user-select: none;
+
+  &:hover, &.dragover {
+    border-color: #d97706;
+    background: #fffbeb;
+
+    .upload-icon { color: #d97706; }
+  }
+
+  .upload-icon {
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+    color: #9ca3af;
+    display: block;
+    margin: 0 auto 8px;
+    transition: color 0.2s;
+  }
+
+  p {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #6b7280;
+
+    &.hint { font-size: 11px; color: #9ca3af; margin: 0; }
+  }
+
+  .browse-link {
+    color: #d97706;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+}
+
+/* ── File preview list ───────────────────────────────── */
+.preview-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: #fcd34d; background: #fffbeb; }
+
+  .preview-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    .file-icon {
+      font-size: 28px;
+      height: 28px;
+      width: 28px;
+
+      &.pdf   { color: #ef4444; }
+      &.other { color: #6b7280; }
+    }
+  }
+
+  .preview-info {
+    flex: 1;
+    min-width: 0;
+
+    .preview-name {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #1e293b;
+    }
+
+    .preview-size { font-size: 11px; color: #9ca3af; }
+  }
+
+  .remove-file {
+    width: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    flex-shrink: 0;
+    color: #9ca3af;
+
+    mat-icon { font-size: 16px !important; height: 16px !important; width: 16px !important; }
+
+    &:hover { color: #ef4444; }
+  }
+}
+
+/* ── Actions ──────────────────────────────────────────── */
+mat-dialog-actions {
+  padding: 12px 24px 16px !important;
+  border-top: 1px solid #f3f4f6;
+  gap: 8px;
+  margin: 0 !important;
+}

@@ -178,41 +178,12 @@
             Assignments <span class="count-chip">{{ classDetail.assignments?.length ?? 0 }}</span>
           </mat-card-title>
           <div class="card-hdr-action">
-            <button mat-stroked-button (click)="showAddAssignmentForm = !showAddAssignmentForm">
+            <button mat-stroked-button (click)="openAssignmentDialog()" [disabled]="addAssignmentLoading">
               <mat-icon>add</mat-icon> New Assignment
             </button>
           </div>
         </mat-card-header>
         <mat-card-content>
-
-          <div class="inline-form assignment-form" *ngIf="showAddAssignmentForm">
-            <mat-form-field appearance="outline" class="full-field">
-              <mat-label>Title</mat-label>
-              <input matInput [(ngModel)]="assignmentForm.title" placeholder="Assignment title">
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="full-field">
-              <mat-label>Description (Optional)</mat-label>
-              <textarea matInput [(ngModel)]="assignmentForm.description" rows="3"
-                        placeholder="Instructions..."></textarea>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="date-field">
-              <mat-label>Due Date (Optional)</mat-label>
-              <input matInput type="date" [(ngModel)]="assignmentForm.dueDate">
-              <mat-icon matSuffix>event</mat-icon>
-            </mat-form-field>
-            <div class="form-actions">
-              <button mat-raised-button color="primary"
-                      [disabled]="addAssignmentLoading || !assignmentForm.title.trim()"
-                      (click)="createAssignment()">
-                <mat-icon>check</mat-icon> Create
-              </button>
-              <button mat-stroked-button
-                      (click)="showAddAssignmentForm = false">
-                Cancel
-              </button>
-            </div>
-            <p class="inline-error" *ngIf="addAssignmentError">{{ addAssignmentError }}</p>
-          </div>
 
           <div class="assignment-list" *ngIf="classDetail.assignments?.length > 0">
             <div class="assignment-item" *ngFor="let a of classDetail.assignments">

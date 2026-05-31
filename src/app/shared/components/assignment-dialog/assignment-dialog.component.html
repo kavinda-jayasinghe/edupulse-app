@@ -1,0 +1,81 @@
+<div class="asgn-dialog">
+
+  <div mat-dialog-title class="dialog-title">
+    <div class="title-icon"><mat-icon>assignment</mat-icon></div>
+    <div class="title-text">
+      <h2>New Assignment</h2>
+      <p class="dialog-subtitle" *ngIf="data?.className">{{ data.className }}</p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="cancel()" matTooltip="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+
+    <mat-form-field appearance="outline" class="full-field">
+      <mat-label>Title *</mat-label>
+      <input matInput [(ngModel)]="form.title" placeholder="e.g. Chapter 5 Exercises"
+             (keydown.enter)="submit()">
+      <mat-icon matSuffix>title</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-field">
+      <mat-label>Description (Optional)</mat-label>
+      <textarea matInput [(ngModel)]="form.description" rows="3"
+                placeholder="Instructions for students..."></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="date-field">
+      <mat-label>Due Date (Optional)</mat-label>
+      <input matInput type="date" [(ngModel)]="form.dueDate">
+      <mat-icon matSuffix>event</mat-icon>
+    </mat-form-field>
+
+    <!-- Attachments -->
+    <div class="attach-section">
+      <div class="attach-label">
+        <mat-icon>attach_file</mat-icon> Attachments
+        <span class="attach-count" *ngIf="filePreviews.length > 0">({{ filePreviews.length }})</span>
+      </div>
+
+      <div class="drop-zone" [class.dragover]="dragOver"
+           (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)"
+           (click)="fileInput.click()">
+        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+        <p>Drag &amp; drop files here or <span class="browse-link">browse</span></p>
+        <p class="hint">Images, PDFs, documents supported</p>
+        <input #fileInput type="file" multiple hidden (change)="onFilesSelected($event)">
+      </div>
+
+      <div class="preview-list" *ngIf="filePreviews.length > 0">
+        <div class="preview-item" *ngFor="let p of filePreviews; let i = index">
+          <div class="preview-thumb">
+            <img *ngIf="p.type === 'image' && p.url" [src]="p.url" alt="preview">
+            <mat-icon *ngIf="p.type !== 'image'" class="file-icon {{ p.type }}">
+              {{ getFileIcon(p.type) }}
+            </mat-icon>
+          </div>
+          <div class="preview-info">
+            <div class="preview-name" [title]="p.file.name">{{ p.file.name }}</div>
+            <div class="preview-size">{{ formatFileSize(p.file.size) }}</div>
+          </div>
+          <button mat-icon-button class="remove-file" (click)="removeFile(i)" matTooltip="Remove">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary"
+            [disabled]="!form.title.trim()"
+            (click)="submit()">
+      <mat-icon>check</mat-icon> Create Assignment
+    </button>
+  </mat-dialog-actions>
+
+</div>

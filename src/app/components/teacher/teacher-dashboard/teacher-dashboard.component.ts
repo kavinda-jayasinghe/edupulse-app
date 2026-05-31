@@ -16,6 +16,7 @@ import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { CreateClassDialogComponent } from '../../../shared/components/create-class-dialog/create-class-dialog.component';
+import { AssignmentDialogComponent, AssignmentDialogResult } from '../../../shared/components/assignment-dialog/assignment-dialog.component';
 
 @Component({
   selector: 'app-teacher-dashboard',
@@ -56,10 +57,7 @@ export class TeacherDashboardComponent implements OnInit {
   addStudentLoading       = false;
   addStudentError         = '';
 
-  showAddAssignmentForm   = false;
-  assignmentForm          = { title: '', description: '', dueDate: '' };
   addAssignmentLoading    = false;
-  addAssignmentError      = '';
 
   studentColumns    = ['name', 'mobile', 'actions'];
   assignmentColumns = ['title', 'dueDate', 'actions'];
@@ -121,16 +119,13 @@ export class TeacherDashboardComponent implements OnInit {
   // ── Class detail ──────────────────────────────────────────
 
   openClassDetail(cls: any) {
-    this.view              = 'class-detail';
-    this.classDetail       = null;
+    this.view               = 'class-detail';
+    this.classDetail        = null;
     this.classDetailLoading = true;
-    this.classDetailError  = '';
-    this.showAddStudentForm    = false;
-    this.showAddAssignmentForm = false;
-    this.addStudentMobile      = '';
-    this.addStudentError       = '';
-    this.addAssignmentError    = '';
-    this.assignmentForm        = { title: '', description: '', dueDate: '' };
+    this.classDetailError   = '';
+    this.showAddStudentForm = false;
+    this.addStudentMobile   = '';
+    this.addStudentError    = '';
 
     this.api.getTeacherClassDetail(this.teacherId, cls.id).subscribe({
       next:  data  => { this.classDetail = data; this.classDetailLoading = false; },
@@ -194,23 +189,29 @@ export class TeacherDashboardComponent implements OnInit {
 
   // ── Assignments ───────────────────────────────────────────
 
-  createAssignment() {
-    if (!this.assignmentForm.title.trim()) return;
-    this.addAssignmentLoading = true;
-    this.addAssignmentError   = '';
-
-    this.api.createAssignment(this.teacherId, this.classDetail.id, this.assignmentForm).subscribe({
-      next: () => {
-        this.assignmentForm        = { title: '', description: '', dueDate: '' };
-        this.addAssignmentLoading  = false;
-        this.showAddAssignmentForm = false;
-        this.refreshClassDetail();
-      },
-      error: (err) => {
-        this.addAssignmentError   = err?.error?.message ?? 'Could not create assignment.';
-        this.addAssignmentLoading = false;
-      },
-    });
+  openAssignmentDialog() {
+    this.dialog
+      .open(AssignmentDialogComponent, {
+        width: '560px',
+        disableClose: true,
+        data: { className: this.classDetail?.name ?? '' },
+      })
+      .afterClosed()
+      .subscribe((result: AssignmentDialogResult | null) => {
+        if (!result) return;
+        this.addAssignmentLoading = true;
+        this.api.createAssignment(this.teacherId, this.classDetail.id, {
+          title:       result.title,
+          description: result.description,
+          dueDate:     result.dueDate,
+        }).subscribe({
+          next:  () => { this.addAssignmentLoading = false; this.refreshClassDetail(); },
+          error: (err) => {
+            this.addAssignmentLoading = false;
+            alert(err?.error?.message ?? 'Could not create assignment.');
+          },
+        });
+      });
   }
 
   confirmDeleteAssignment(assignment: any) {
