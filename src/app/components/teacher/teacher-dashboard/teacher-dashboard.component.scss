@@ -129,9 +129,10 @@
 
 /* ── Section Cards ───────────────────────────────────────── */
 .section-card {
-  border-radius: 14px !important;
+  border-radius: 12px !important;
 
-  mat-card-content { padding-top: 16px; }
+  mat-card-header { padding-bottom: 6px !important; }
+  mat-card-content { padding-top: 13px !important; padding-bottom: 13px !important; }
 }
 
 .card-avatar {
@@ -325,6 +326,15 @@
   }
 }
 
+/* ── Copyable class code chips ───────────────────────────── */
+.copyable {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: #fde68a !important; color: #78350f !important; }
+}
+
 /* ── Class tile enhancements ─────────────────────────────── */
 .code-chip {
   font-family: monospace;
@@ -504,18 +514,18 @@ mat-card-header {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 7px 10px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 
   .filter-left {
     display: flex;
     align-items: center;
     gap: 6px;
 
-    .filter-icon { font-size: 16px; height: 16px; width: 16px; color: #6b7280; }
+    .filter-icon { font-size: 15px; height: 15px; width: 15px; color: #6b7280; }
 
     .filter-label { font-size: 12px; color: #6b7280; font-weight: 500; white-space: nowrap; }
   }
@@ -532,7 +542,7 @@ mat-card-header {
   .date-filter-input {
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    padding: 3px 8px;
+    padding: 3px 7px;
     font-size: 12px;
     color: #374151;
     background: white;
@@ -543,23 +553,23 @@ mat-card-header {
   }
 
   .clear-filter-btn {
-    width: 24px !important;
-    height: 24px !important;
-    line-height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
+    line-height: 22px !important;
     color: #9ca3af;
 
-    mat-icon { font-size: 14px !important; height: 14px !important; width: 14px !important; }
+    mat-icon { font-size: 13px !important; height: 13px !important; width: 13px !important; }
 
     &:hover { color: #ef4444; }
   }
 
   .page-btn {
-    width: 28px !important;
-    height: 28px !important;
-    line-height: 28px !important;
+    width: 26px !important;
+    height: 26px !important;
+    line-height: 26px !important;
     color: #6b7280;
 
-    mat-icon { font-size: 18px !important; height: 18px !important; width: 18px !important; }
+    mat-icon { font-size: 17px !important; height: 17px !important; width: 17px !important; }
 
     &:not([disabled]):hover { color: #d97706; }
     &[disabled] { opacity: 0.35; }
@@ -570,7 +580,7 @@ mat-card-header {
 .assignment-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 7px;
 
   @media (max-width: 640px) { grid-template-columns: 1fr; }
 }
@@ -578,29 +588,24 @@ mat-card-header {
 .assignment-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
+  gap: 9px;
+  padding: 12px 12px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #fafafa;
   transition: background 0.15s, border-color 0.15s;
   min-width: 0;
 
-  &:hover {
-    background: #fffbeb;
-    border-color: #fcd34d;
-
-    // .asgn-actions { opacity: 1; }
-  }
+  &:hover { background: #fffbeb; border-color: #fcd34d; }
 
   .asgn-icon {
-    width: 30px; height: 30px;
-    border-radius: 7px;
+    width: 28px; height: 28px;
+    border-radius: 6px;
     background: #fef3c7;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 
-    mat-icon { color: #d97706; font-size: 16px; height: 16px; width: 16px; }
+    mat-icon { color: #d97706; font-size: 15px; height: 15px; width: 15px; }
   }
 
   .asgn-body {
@@ -616,14 +621,16 @@ mat-card-header {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.3;
   }
 
   .asgn-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     font-size: 11px;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.45);
+    line-height: 1.3;
 
     span {
       display: inline-flex;
@@ -632,31 +639,17 @@ mat-card-header {
       mat-icon { font-size: 11px; height: 11px; width: 11px; }
     }
 
-    .due-chip {
-      color: #b45309;
-      font-weight: 600;
-    }
+    .due-chip { color: #b45309; font-weight: 600; }
 
-    .file-chip {
-      color: #4f46e5;
-      font-weight: 600;
-      cursor: pointer;
-      &:hover { text-decoration: underline; }
-    }
+    .file-chip { color: #4f46e5; font-weight: 600; cursor: pointer; &:hover { text-decoration: underline; } }
   }
 
-  .asgn-desc {
-    margin: 0;
-    font-size: 11px;
-    color: rgba(0, 0, 0, 0.5);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .asgn-desc { display: none; }
 
   .asgn-actions {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 2px;
     flex-shrink: 0;
   }

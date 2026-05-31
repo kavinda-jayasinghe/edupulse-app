@@ -52,8 +52,12 @@
           <div class="tile-meta">
             <span><mat-icon>group</mat-icon> {{ cls.studentCount }} students</span>
             <span *ngIf="cls.subject"><mat-icon>subject</mat-icon> {{ cls.subject }}</span>
-            <span *ngIf="cls.classCode" class="code-chip">
-              <mat-icon>vpn_key</mat-icon> {{ cls.classCode }}
+            <span *ngIf="cls.classCode" class="code-chip copyable"
+                  (click)="copyCode(cls.classCode, $event)"
+                  [matTooltip]="copiedCode === cls.classCode ? 'Copied!' : 'Copy code'"
+                  matTooltipShowDelay="0">
+              <mat-icon>{{ copiedCode === cls.classCode ? 'check' : 'vpn_key' }}</mat-icon>
+              {{ cls.classCode }}
             </span>
           </div>
         </div>
@@ -98,8 +102,12 @@
         <div class="detail-title-wrap">
           <h2 class="detail-title">{{ classDetail.name }}</h2>
           <div class="detail-badges">
-            <span class="badge code-badge" *ngIf="classDetail.classCode">
-              <mat-icon>vpn_key</mat-icon> {{ classDetail.classCode }}
+            <span class="badge code-badge copyable" *ngIf="classDetail.classCode"
+                  (click)="copyCode(classDetail.classCode, $event)"
+                  [matTooltip]="copiedCode === classDetail.classCode ? 'Copied!' : 'Copy code'"
+                  matTooltipShowDelay="0">
+              <mat-icon>{{ copiedCode === classDetail.classCode ? 'check' : 'vpn_key' }}</mat-icon>
+              {{ classDetail.classCode }}
             </span>
             <span class="badge subject-badge" *ngIf="classDetail.subject">
               <mat-icon>subject</mat-icon> {{ classDetail.subject }}

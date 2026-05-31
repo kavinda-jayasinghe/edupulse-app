@@ -86,6 +86,17 @@ export class TeacherDashboardComponent implements OnInit {
 
   onAssignmentFilterChange() { this.assignmentPage = 0; }
 
+  // ── Clipboard ─────────────────────────────────────────────
+  copiedCode = '';
+
+  copyCode(code: string, event: Event) {
+    event.stopPropagation();
+    navigator.clipboard.writeText(code).then(() => {
+      this.copiedCode = code;
+      setTimeout(() => this.copiedCode = '', 1800);
+    });
+  }
+
   studentColumns    = ['name', 'mobile', 'actions'];
   assignmentColumns = ['title', 'dueDate', 'actions'];
 
