@@ -58,12 +58,12 @@
           </div>
         </div>
         <div class="tile-actions">
-          <button mat-icon-button class="tile-action-btn"
+          <button class="tile-action-btn"
                   (click)="$event.stopPropagation(); editClass(cls)"
                   matTooltip="Edit class">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button class="tile-action-btn tile-action-delete"
+          <button class="tile-action-btn tile-action-delete"
                   (click)="$event.stopPropagation(); confirmDeleteClass(cls)"
                   matTooltip="Delete class">
             <mat-icon>delete</mat-icon>
@@ -178,10 +178,10 @@
                 <p class="asgn-desc" *ngIf="a.description">{{ a.description }}</p>
               </div>
               <div class="asgn-actions">
-                <button mat-icon-button class="asgn-edit-btn" (click)="editAssignment(a)" matTooltip="Edit">
+                <button class="asgn-action-btn asgn-edit-btn" (click)="editAssignment(a)" matTooltip="Edit">
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" (click)="confirmDeleteAssignment(a)" matTooltip="Delete">
+                <button class="asgn-action-btn asgn-delete-btn" (click)="confirmDeleteAssignment(a)" matTooltip="Delete">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
