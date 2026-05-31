@@ -8,10 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+export interface ExistingFile { id: number; fileName: string; fileType: string; fileSize: number; }
+
 export interface AssignmentDialogData {
   className: string;
   mode?: 'create' | 'edit';
-  assignment?: { id: number; title: string; description: string; dueDate: string };
+  assignment?: { id: number; title: string; description: string; dueDate: string; files?: ExistingFile[] };
 }
 
 export interface AssignmentDialogResult {
@@ -19,6 +21,7 @@ export interface AssignmentDialogResult {
   description: string;
   dueDate: string;
   files: File[];
+  filesToDelete: number[];
 }
 
 @Component({
@@ -35,6 +38,8 @@ export interface AssignmentDialogResult {
 export class AssignmentDialogComponent {
   form = { title: '', description: '', dueDate: '' };
   filePreviews: { file: File; url: string | null; type: 'image' | 'pdf' | 'other' }[] = [];
+  existingFiles: ExistingFile[] = [];
+  removedFileIds: number[]      = [];
   dragOver = false;
   isEdit   = false;
 
@@ -49,7 +54,27 @@ export class AssignmentDialogComponent {
         description: data.assignment.description ?? '',
         dueDate:     data.assignment.dueDate     ?? '',
       };
+      this.existingFiles = (data.assignment.files ?? []).map(f => ({ ...f }));
     }
+  }
+
+  removeExistingFile(index: number) {
+    const removed = this.existingFiles.splice(index, 1)[0];
+    this.removedFileIds.push(removed.id);
+  }
+
+  existingFileIcon(fileType: string): string {
+    if (fileType.startsWith('image/'))     return 'image';
+    if (fileType === 'application/pdf')    return 'picture_as_pdf';
+    if (fileType.includes('word'))         return 'description';
+    return 'insert_drive_file';
+  }
+
+  existingFileIconColor(fileType: string): string {
+    if (fileType.startsWith('image/'))     return '#10b981';
+    if (fileType === 'application/pdf')    return '#ef4444';
+    if (fileType.includes('word'))         return '#3b82f6';
+    return '#6b7280';
   }
 
   onFilesSelected(event: Event) {
@@ -94,7 +119,11 @@ export class AssignmentDialogComponent {
 
   submit() {
     if (!this.form.title.trim()) return;
-    this.dialogRef.close({ ...this.form, files: this.filePreviews.map(p => p.file) });
+    this.dialogRef.close({
+      ...this.form,
+      files:         this.filePreviews.map(p => p.file),
+      filesToDelete: this.removedFileIds,
+    });
   }
 
   cancel() { this.dialogRef.close(null); }

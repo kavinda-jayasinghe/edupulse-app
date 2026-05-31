@@ -38,7 +38,26 @@
     <div class="attach-section">
       <div class="attach-label">
         <mat-icon>attach_file</mat-icon> Attachments
-        <span class="attach-count" *ngIf="filePreviews.length > 0">({{ filePreviews.length }})</span>
+        <span class="attach-count" *ngIf="existingFiles.length + filePreviews.length > 0">
+          ({{ existingFiles.length + filePreviews.length }})
+        </span>
+      </div>
+
+      <!-- Existing saved files (edit mode only) -->
+      <div class="existing-files" *ngIf="existingFiles.length > 0">
+        <div class="existing-label">Saved files</div>
+        <div class="existing-item" *ngFor="let f of existingFiles; let i = index">
+          <mat-icon class="existing-icon" [style.color]="existingFileIconColor(f.fileType)">
+            {{ existingFileIcon(f.fileType) }}
+          </mat-icon>
+          <div class="existing-info">
+            <div class="existing-name" [title]="f.fileName">{{ f.fileName }}</div>
+            <div class="existing-size">{{ formatFileSize(f.fileSize) }}</div>
+          </div>
+          <button class="remove-existing" (click)="removeExistingFile(i)" matTooltip="Remove file">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
       </div>
 
       <div class="drop-zone" [class.dragover]="dragOver"
@@ -62,7 +81,7 @@
             <div class="preview-name" [title]="p.file.name">{{ p.file.name }}</div>
             <div class="preview-size">{{ formatFileSize(p.file.size) }}</div>
           </div>
-          <button mat-icon-button class="remove-file" (click)="removeFile(i)" matTooltip="Remove">
+          <button class="remove-file" (click)="removeFile(i)" matTooltip="Remove">
             <mat-icon>close</mat-icon>
           </button>
         </div>

@@ -111,6 +111,13 @@ export class ApiService {
     ) as any;
   }
 
+  deleteAssignmentFile(teacherId: number, classId: number, assignmentId: number, fileId: number) {
+    return this.http.delete<void>(
+      `${this.base}/teacher/${teacherId}/classes/${classId}/assignments/${assignmentId}/files/${fileId}`,
+      { headers: this.headers() }
+    );
+  }
+
   // ── Admin ─────────────────────────────────────────────────
   getAdminStats() {
     return this.http.get<any>(`${this.base}/admin/stats`, { headers: this.headers() });

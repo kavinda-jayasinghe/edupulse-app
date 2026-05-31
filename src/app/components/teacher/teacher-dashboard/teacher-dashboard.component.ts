@@ -278,11 +278,19 @@ export class TeacherDashboardComponent implements OnInit {
           dueDate:     result.dueDate,
         }).subscribe({
           next: () => {
-            const done = () => this.refreshClassDetail();
-            if (result.files?.length > 0) {
-              this.api.uploadAssignmentFiles(this.teacherId, this.classDetail.id, assignment.id, result.files)
+            const deletes  = result.filesToDelete ?? [];
+            const newFiles = result.files         ?? [];
+            let pending    = deletes.length + (newFiles.length > 0 ? 1 : 0);
+            if (pending === 0) { this.refreshClassDetail(); return; }
+            const done = () => { if (--pending === 0) this.refreshClassDetail(); };
+            deletes.forEach(fid =>
+              this.api.deleteAssignmentFile(this.teacherId, this.classDetail.id, assignment.id, fid)
+                .subscribe({ next: done, error: done })
+            );
+            if (newFiles.length > 0) {
+              this.api.uploadAssignmentFiles(this.teacherId, this.classDetail.id, assignment.id, newFiles)
                 .subscribe({ next: done, error: done });
-            } else { done(); }
+            }
           },
           error: (err) => alert(err?.error?.message ?? 'Could not update assignment.'),
         });
