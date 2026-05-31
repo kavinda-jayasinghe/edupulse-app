@@ -18,6 +18,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/compo
 import { ClassDialogData, CreateClassDialogComponent } from '../../../shared/components/create-class-dialog/create-class-dialog.component';
 import { AssignmentDialogComponent, AssignmentDialogResult } from '../../../shared/components/assignment-dialog/assignment-dialog.component';
 import { FileViewerDialogComponent } from '../../../shared/components/file-viewer-dialog/file-viewer-dialog.component';
+import { AddStudentDialogComponent } from '../../../shared/components/add-student-dialog/add-student-dialog.component';
 
 @Component({
   selector: 'app-teacher-dashboard',
@@ -306,6 +307,17 @@ export class TeacherDashboardComponent implements OnInit {
           error: (err) => alert(err?.error?.message ?? 'Could not update assignment.'),
         });
       });
+  }
+
+  openAddStudentDialog(cls: any, event: Event) {
+    event.stopPropagation();
+    this.dialog.open(AddStudentDialogComponent, {
+      width: '480px',
+      disableClose: false,
+      data: { className: cls.name, teacherId: this.teacherId, classId: cls.id },
+    }).afterClosed().subscribe(added => {
+      if (added) this.loadOverview();
+    });
   }
 
   openFileViewer(assignment: any) {
