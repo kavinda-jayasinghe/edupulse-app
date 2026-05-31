@@ -94,6 +94,23 @@ export class ApiService {
     return this.http.delete<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/assignments/${assignmentId}`, { headers: this.headers() });
   }
 
+  uploadAssignmentFiles(teacherId: number, classId: number, assignmentId: number, files: File[]) {
+    const fd = new FormData();
+    files.forEach(f => fd.append('files', f, f.name));
+    return this.http.post<any[]>(
+      `${this.base}/teacher/${teacherId}/classes/${classId}/assignments/${assignmentId}/files`,
+      fd,
+      { headers: new HttpHeaders({ Authorization: `Bearer ${this.auth.getToken()}` }) }
+    );
+  }
+
+  getAssignmentFileBlob(teacherId: number, classId: number, assignmentId: number, fileId: number) {
+    return this.http.get(
+      `${this.base}/teacher/${teacherId}/classes/${classId}/assignments/${assignmentId}/files/${fileId}`,
+      { headers: this.headers(), responseType: 'blob' as 'json' }
+    ) as any;
+  }
+
   // ── Admin ─────────────────────────────────────────────────
   getAdminStats() {
     return this.http.get<any>(`${this.base}/admin/stats`, { headers: this.headers() });

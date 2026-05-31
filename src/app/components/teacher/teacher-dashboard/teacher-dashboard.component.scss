@@ -1,6 +1,6 @@
 .teacher-dashboard {
   min-height: calc(100vh - 64px);
-  background: #fffbeb;
+  background: #f4f2f2;
 }
 
 /* ── Teacher Banner ───────────────────────────────────────── */
@@ -636,6 +636,13 @@ mat-card-header {
       color: #b45309;
       font-weight: 600;
     }
+
+    .file-chip {
+      color: #4f46e5;
+      font-weight: 600;
+      cursor: pointer;
+      &:hover { text-decoration: underline; }
+    }
   }
 
   .asgn-desc {
@@ -670,6 +677,7 @@ mat-card-header {
     mat-icon { font-size: 14px; height: 14px; width: 14px; }
   }
 
+  .asgn-files-btn  { color: #9ca3af; &:hover { color: #d97706; background: rgba(217, 119, 6, 0.08); } }
   .asgn-edit-btn   { color: #9ca3af; &:hover { color: #4f46e5; background: rgba(79, 70, 229, 0.08); } }
   .asgn-delete-btn { color: #9ca3af; &:hover { color: #dc2626; background: rgba(220, 38, 38, 0.08); } }
 }

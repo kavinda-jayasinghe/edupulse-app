@@ -1,0 +1,97 @@
+<div class="viewer-dialog">
+
+  <div class="viewer-header" mat-dialog-title>
+    <div class="viewer-header-icon"><mat-icon>attach_file</mat-icon></div>
+    <div class="viewer-header-text">
+      <h2>Attachments</h2>
+      <p class="viewer-subtitle">{{ data.assignmentTitle }}</p>
+    </div>
+    <button class="viewer-close" (click)="dialogRef.close()" matTooltip="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="viewer-body">
+
+    <!-- Empty state -->
+    <div class="viewer-empty" *ngIf="!data.files?.length">
+      <mat-icon>folder_open</mat-icon>
+      <p>No attachments for this assignment.</p>
+    </div>
+
+    <div class="viewer-split" *ngIf="data.files?.length">
+
+      <!-- Left: file list -->
+      <div class="file-list">
+        <div class="file-list-item"
+             *ngFor="let f of data.files"
+             [class.active]="selectedFile?.id === f.id"
+             (click)="selectFile(f)">
+          <mat-icon class="file-list-icon" [style.color]="getFileIconColor(f.fileType)">
+            {{ getFileIcon(f.fileType) }}
+          </mat-icon>
+          <div class="file-list-info">
+            <div class="file-list-name" [title]="f.fileName">{{ f.fileName }}</div>
+            <div class="file-list-size">{{ formatSize(f.fileSize) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: preview -->
+      <div class="preview-panel">
+
+        <!-- Loading -->
+        <div class="preview-loading" *ngIf="previewLoading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading preview&hellip;</p>
+        </div>
+
+        <!-- Error -->
+        <div class="preview-error" *ngIf="previewError && !previewLoading">
+          <mat-icon>error_outline</mat-icon>
+          <p>Could not load file.</p>
+        </div>
+
+        <!-- Image preview -->
+        <div class="preview-image-wrap" *ngIf="!previewLoading && !previewError && isImage(selectedFile) && previewUrl">
+          <img [src]="previewUrl" [alt]="selectedFile?.fileName" class="preview-image">
+        </div>
+
+        <!-- PDF preview -->
+        <iframe *ngIf="!previewLoading && !previewError && isPdf(selectedFile) && previewUrl"
+                [src]="previewUrl"
+                class="preview-iframe"
+                frameborder="0">
+        </iframe>
+
+        <!-- Other file type -->
+        <div class="preview-other" *ngIf="!previewLoading && !previewError && !isImage(selectedFile) && !isPdf(selectedFile) && previewUrl">
+          <mat-icon [style.color]="getFileIconColor(selectedFile?.fileType ?? '')">
+            {{ getFileIcon(selectedFile?.fileType ?? '') }}
+          </mat-icon>
+          <p class="preview-other-name">{{ selectedFile?.fileName }}</p>
+          <p class="preview-other-size">{{ formatSize(selectedFile?.fileSize ?? 0) }}</p>
+          <p class="preview-other-hint">Preview not available for this file type.</p>
+          <button class="download-btn" (click)="download()">
+            <mat-icon>download</mat-icon> Download
+          </button>
+        </div>
+
+        <!-- No file selected yet -->
+        <div class="preview-placeholder" *ngIf="!previewLoading && !previewError && !previewUrl">
+          <mat-icon>description</mat-icon>
+          <p>Select a file to preview</p>
+        </div>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" *ngIf="previewUrl && !previewLoading">
+    <button class="download-btn" (click)="download()">
+      <mat-icon>download</mat-icon> Download
+    </button>
+    <button mat-stroked-button (click)="dialogRef.close()">Close</button>
+  </mat-dialog-actions>
+
+</div>

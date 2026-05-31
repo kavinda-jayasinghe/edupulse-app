@@ -174,10 +174,16 @@
                   <span class="created-chip">
                     <mat-icon>calendar_today</mat-icon> {{ a.createdAt }}
                   </span>
+                  <span *ngIf="a.files?.length > 0" class="file-chip" (click)="$event.stopPropagation(); openFileViewer(a)">
+                    <mat-icon>attach_file</mat-icon> {{ a.files.length }}
+                  </span>
                 </div>
                 <p class="asgn-desc" *ngIf="a.description">{{ a.description }}</p>
               </div>
               <div class="asgn-actions">
+                <button *ngIf="a.files?.length > 0" class="asgn-action-btn asgn-files-btn" (click)="openFileViewer(a)" matTooltip="View files">
+                  <mat-icon>folder_open</mat-icon>
+                </button>
                 <button class="asgn-action-btn asgn-edit-btn" (click)="editAssignment(a)" matTooltip="Edit">
                   <mat-icon>edit</mat-icon>
                 </button>

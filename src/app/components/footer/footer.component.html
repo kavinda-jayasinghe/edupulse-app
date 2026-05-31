@@ -1,9 +1,32 @@
 <footer class="footer">
   <div class="footer-content">
-    <span>&copy; Edu Pulse</span>
+    <div class="footer-brand">
+      <span class="brand-icon">📚</span>
+      <span class="brand-name">Edu Pulse</span>
+    </div>
+    
     <nav class="footer-links">
       <a routerLink="/about">About</a>
+      <a routerLink="/features">Features</a>
       <a routerLink="/contact">Contact</a>
+      <a routerLink="/privacy">Privacy</a>
+      <a routerLink="/terms">Terms</a>
     </nav>
+    
+    <div class="footer-copyright">
+      <span>&copy; {{ currentYear }} Info Labs. All rights reserved.</span>
+    </div>
+    
+    <div class="footer-social">
+      <a href="#" class="social-link" aria-label="Twitter">
+        <mat-icon>alternate_email</mat-icon>
+      </a>
+      <a href="#" class="social-link" aria-label="GitHub">
+        <mat-icon>code</mat-icon>
+      </a>
+      <a href="#" class="social-link" aria-label="LinkedIn">
+        <mat-icon>business</mat-icon>
+      </a>
+    </div>
   </div>
 </footer>

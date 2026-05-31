@@ -17,6 +17,7 @@ import { AuthService } from '../../../services/auth.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ClassDialogData, CreateClassDialogComponent } from '../../../shared/components/create-class-dialog/create-class-dialog.component';
 import { AssignmentDialogComponent, AssignmentDialogResult } from '../../../shared/components/assignment-dialog/assignment-dialog.component';
+import { FileViewerDialogComponent } from '../../../shared/components/file-viewer-dialog/file-viewer-dialog.component';
 
 @Component({
   selector: 'app-teacher-dashboard',
@@ -246,7 +247,13 @@ export class TeacherDashboardComponent implements OnInit {
           description: result.description,
           dueDate:     result.dueDate,
         }).subscribe({
-          next:  () => { this.addAssignmentLoading = false; this.refreshClassDetail(); },
+          next: (assignment) => {
+            const done = () => { this.addAssignmentLoading = false; this.refreshClassDetail(); };
+            if (result.files?.length > 0) {
+              this.api.uploadAssignmentFiles(this.teacherId, this.classDetail.id, assignment.id, result.files)
+                .subscribe({ next: done, error: done });
+            } else { done(); }
+          },
           error: (err) => {
             this.addAssignmentLoading = false;
             alert(err?.error?.message ?? 'Could not create assignment.');
@@ -270,10 +277,30 @@ export class TeacherDashboardComponent implements OnInit {
           description: result.description,
           dueDate:     result.dueDate,
         }).subscribe({
-          next:  () => this.refreshClassDetail(),
+          next: () => {
+            const done = () => this.refreshClassDetail();
+            if (result.files?.length > 0) {
+              this.api.uploadAssignmentFiles(this.teacherId, this.classDetail.id, assignment.id, result.files)
+                .subscribe({ next: done, error: done });
+            } else { done(); }
+          },
           error: (err) => alert(err?.error?.message ?? 'Could not update assignment.'),
         });
       });
+  }
+
+  openFileViewer(assignment: any) {
+    this.dialog.open(FileViewerDialogComponent, {
+      width: '820px',
+      maxHeight: '88vh',
+      data: {
+        files:           assignment.files ?? [],
+        teacherId:       this.teacherId,
+        classId:         this.classDetail.id,
+        assignmentId:    assignment.id,
+        assignmentTitle: assignment.title,
+      },
+    });
   }
 
   confirmDeleteAssignment(assignment: any) {
