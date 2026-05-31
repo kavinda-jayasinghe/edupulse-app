@@ -78,10 +78,6 @@ export class ApiService {
     return this.http.delete<any>(`${this.base}/teacher/${teacherId}/classes/${classId}`, { headers: this.headers() });
   }
 
-  addStudentToClass(teacherId: number, classId: number, mobile: string) {
-    return this.http.post<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/students`, { mobile }, { headers: this.headers() });
-  }
-
   removeStudentFromClass(teacherId: number, classId: number, studentId: number) {
     return this.http.delete<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/students/${studentId}`, { headers: this.headers() });
   }

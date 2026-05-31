@@ -59,6 +59,32 @@ export class TeacherDashboardComponent implements OnInit {
 
   addAssignmentLoading    = false;
 
+  // ── Assignment pagination + filter ────────────────────────
+  readonly ASGN_PAGE_SIZE = 6;
+  assignmentPage          = 0;
+  assignmentDateFrom      = '';
+
+  get filteredAssignments(): any[] {
+    const list: any[] = this.classDetail?.assignments ?? [];
+    if (!this.assignmentDateFrom) return list;
+    return list.filter((a: any) => (a.createdAt ?? '') >= this.assignmentDateFrom);
+  }
+
+  get pagedAssignments(): any[] {
+    const s = this.assignmentPage * this.ASGN_PAGE_SIZE;
+    return this.filteredAssignments.slice(s, s + this.ASGN_PAGE_SIZE);
+  }
+
+  get assignmentPageCount(): number {
+    return Math.ceil(this.filteredAssignments.length / this.ASGN_PAGE_SIZE);
+  }
+
+  get assignmentPageEnd(): number {
+    return Math.min((this.assignmentPage + 1) * this.ASGN_PAGE_SIZE, this.filteredAssignments.length);
+  }
+
+  onAssignmentFilterChange() { this.assignmentPage = 0; }
+
   studentColumns    = ['name', 'mobile', 'actions'];
   assignmentColumns = ['title', 'dueDate', 'actions'];
 
@@ -158,6 +184,8 @@ export class TeacherDashboardComponent implements OnInit {
     this.showAddStudentForm = false;
     this.addStudentMobile   = '';
     this.addStudentError    = '';
+    this.assignmentPage     = 0;
+    this.assignmentDateFrom = '';
 
     this.api.getTeacherClassDetail(this.teacherId, cls.id).subscribe({
       next:  data  => { this.classDetail = data; this.classDetailLoading = false; },
@@ -180,25 +208,6 @@ export class TeacherDashboardComponent implements OnInit {
 
   // ── Students ──────────────────────────────────────────────
 
-  addStudent() {
-    const mobile = this.addStudentMobile.trim();
-    if (!mobile) return;
-    this.addStudentLoading = true;
-    this.addStudentError   = '';
-
-    this.api.addStudentToClass(this.teacherId, this.classDetail.id, mobile).subscribe({
-      next: () => {
-        this.addStudentMobile      = '';
-        this.addStudentLoading     = false;
-        this.showAddStudentForm    = false;
-        this.refreshClassDetail();
-      },
-      error: (err) => {
-        this.addStudentError   = err?.error?.message ?? 'Could not add student.';
-        this.addStudentLoading = false;
-      },
-    });
-  }
 
   confirmRemoveStudent(student: any) {
     this.openConfirm({

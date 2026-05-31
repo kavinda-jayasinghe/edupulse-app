@@ -491,19 +491,88 @@ mat-card-header {
   .mono        { font-family: monospace; font-size: 13px; }
 }
 
+/* ── Assignment filter bar ───────────────────────────────── */
+.asgn-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+
+  .filter-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .filter-icon { font-size: 16px; height: 16px; width: 16px; color: #6b7280; }
+
+    .filter-label { font-size: 12px; color: #6b7280; font-weight: 500; white-space: nowrap; }
+  }
+
+  .filter-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+
+    .page-info { font-size: 12px; color: #6b7280; white-space: nowrap; padding: 0 4px; }
+  }
+
+  .date-filter-input {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 12px;
+    color: #374151;
+    background: white;
+    outline: none;
+    cursor: pointer;
+
+    &:focus { border-color: #d97706; }
+  }
+
+  .clear-filter-btn {
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    color: #9ca3af;
+
+    mat-icon { font-size: 14px !important; height: 14px !important; width: 14px !important; }
+
+    &:hover { color: #ef4444; }
+  }
+
+  .page-btn {
+    width: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    color: #6b7280;
+
+    mat-icon { font-size: 18px !important; height: 18px !important; width: 18px !important; }
+
+    &:not([disabled]):hover { color: #d97706; }
+    &[disabled] { opacity: 0.35; }
+  }
+}
+
 /* ── Assignment list ─────────────────────────────────────── */
 .assignment-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .assignment-item {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 10px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #fafafa;
   transition: background 0.15s, border-color 0.15s;
@@ -514,13 +583,13 @@ mat-card-header {
   }
 
   .asgn-icon {
-    width: 38px; height: 38px;
-    border-radius: 9px;
+    width: 30px; height: 30px;
+    border-radius: 7px;
     background: #fef3c7;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 
-    mat-icon { color: #d97706; font-size: 20px; height: 20px; width: 20px; }
+    mat-icon { color: #d97706; font-size: 16px; height: 16px; width: 16px; }
   }
 
   .asgn-body {
@@ -529,25 +598,27 @@ mat-card-header {
   }
 
   .asgn-title {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: #1e293b;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .asgn-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    font-size: 12px;
+    gap: 8px;
+    font-size: 11px;
     color: rgba(0, 0, 0, 0.5);
-    margin-bottom: 4px;
 
     span {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      mat-icon { font-size: 13px; height: 13px; width: 13px; }
+      gap: 2px;
+      mat-icon { font-size: 11px; height: 11px; width: 11px; }
     }
 
     .due-chip {
@@ -558,8 +629,10 @@ mat-card-header {
 
   .asgn-desc {
     margin: 0;
-    font-size: 13px;
-    color: rgba(0, 0, 0, 0.6);
-    white-space: pre-wrap;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
