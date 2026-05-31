@@ -1,9 +1,11 @@
 <div class="asgn-dialog">
 
   <div mat-dialog-title class="dialog-title">
-    <div class="title-icon"><mat-icon>assignment</mat-icon></div>
+    <div class="title-icon" [class.edit-mode]="isEdit">
+      <mat-icon>{{ isEdit ? 'edit_note' : 'assignment' }}</mat-icon>
+    </div>
     <div class="title-text">
-      <h2>New Assignment</h2>
+      <h2>{{ isEdit ? 'Edit Assignment' : 'New Assignment' }}</h2>
       <p class="dialog-subtitle" *ngIf="data?.className">{{ data.className }}</p>
     </div>
     <button mat-icon-button class="close-btn" (click)="cancel()" matTooltip="Close">
@@ -74,7 +76,7 @@
     <button mat-raised-button color="primary"
             [disabled]="!form.title.trim()"
             (click)="submit()">
-      <mat-icon>check</mat-icon> Create Assignment
+      <mat-icon>check</mat-icon> {{ isEdit ? 'Update Assignment' : 'Create Assignment' }}
     </button>
   </mat-dialog-actions>
 

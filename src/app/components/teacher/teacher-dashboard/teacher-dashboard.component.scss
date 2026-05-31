@@ -41,7 +41,7 @@
 
   .sub {
     margin: 0;
-    opacity: 0.78;
+    // opacity: 0.78;
     font-size: 14px;
   }
 }
@@ -562,24 +562,29 @@ mat-card-header {
 
 /* ── Assignment list ─────────────────────────────────────── */
 .assignment-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
 }
 
 .assignment-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #fafafa;
   transition: background 0.15s, border-color 0.15s;
+  min-width: 0;
 
   &:hover {
     background: #fffbeb;
     border-color: #fcd34d;
+
+    // .asgn-actions { opacity: 1; }
   }
 
   .asgn-icon {
@@ -634,5 +639,24 @@ mat-card-header {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .asgn-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex-shrink: 0;
+    // opacity: 0;
+    transition: opacity 0.15s;
+
+    button {
+      width: 26px !important;
+      height: 26px !important;
+      line-height: 26px !important;
+
+      mat-icon { font-size: 14px !important; height: 14px !important; width: 14px !important; }
+    }
+
+    .asgn-edit-btn { color: #6b7280; &:hover { color: #4f46e5; } }
   }
 }

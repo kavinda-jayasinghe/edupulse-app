@@ -1,2 +1,7 @@
-<app-header *ngIf="showHeader$ | async"></app-header>
-<router-outlet></router-outlet>
+<div class="app-shell">
+  <app-header *ngIf="showHeader$ | async"></app-header>
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+  <app-footer *ngIf="showHeader$ | async"></app-footer>
+</div>

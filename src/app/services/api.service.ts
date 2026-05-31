@@ -86,6 +86,10 @@ export class ApiService {
     return this.http.post<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/assignments`, body, { headers: this.headers() });
   }
 
+  updateAssignment(teacherId: number, classId: number, assignmentId: number, body: { title: string; description: string; dueDate: string }) {
+    return this.http.put<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/assignments/${assignmentId}`, body, { headers: this.headers() });
+  }
+
   deleteAssignment(teacherId: number, classId: number, assignmentId: number) {
     return this.http.delete<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/assignments/${assignmentId}`, { headers: this.headers() });
   }

@@ -255,6 +255,27 @@ export class TeacherDashboardComponent implements OnInit {
       });
   }
 
+  editAssignment(assignment: any) {
+    this.dialog
+      .open(AssignmentDialogComponent, {
+        width: '560px',
+        disableClose: true,
+        data: { className: this.classDetail?.name ?? '', mode: 'edit', assignment },
+      })
+      .afterClosed()
+      .subscribe((result: AssignmentDialogResult | null) => {
+        if (!result) return;
+        this.api.updateAssignment(this.teacherId, this.classDetail.id, assignment.id, {
+          title:       result.title,
+          description: result.description,
+          dueDate:     result.dueDate,
+        }).subscribe({
+          next:  () => this.refreshClassDetail(),
+          error: (err) => alert(err?.error?.message ?? 'Could not update assignment.'),
+        });
+      });
+  }
+
   confirmDeleteAssignment(assignment: any) {
     this.openConfirm({
       title:        'Delete Assignment',

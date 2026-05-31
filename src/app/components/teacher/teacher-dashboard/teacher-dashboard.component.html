@@ -177,10 +177,14 @@
                 </div>
                 <p class="asgn-desc" *ngIf="a.description">{{ a.description }}</p>
               </div>
-              <button mat-icon-button color="warn" (click)="confirmDeleteAssignment(a)"
-                      matTooltip="Delete assignment">
-                <mat-icon>delete</mat-icon>
-              </button>
+              <div class="asgn-actions">
+                <button mat-icon-button class="asgn-edit-btn" (click)="editAssignment(a)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="confirmDeleteAssignment(a)" matTooltip="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
             </div>
           </div>
 

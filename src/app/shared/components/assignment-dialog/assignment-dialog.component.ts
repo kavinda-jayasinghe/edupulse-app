@@ -8,7 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-export interface AssignmentDialogData { className: string; }
+export interface AssignmentDialogData {
+  className: string;
+  mode?: 'create' | 'edit';
+  assignment?: { id: number; title: string; description: string; dueDate: string };
+}
 
 export interface AssignmentDialogResult {
   title: string;
@@ -32,11 +36,21 @@ export class AssignmentDialogComponent {
   form = { title: '', description: '', dueDate: '' };
   filePreviews: { file: File; url: string | null; type: 'image' | 'pdf' | 'other' }[] = [];
   dragOver = false;
+  isEdit   = false;
 
   constructor(
     public dialogRef: MatDialogRef<AssignmentDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AssignmentDialogData,
-  ) {}
+  ) {
+    if (data?.mode === 'edit' && data.assignment) {
+      this.isEdit = true;
+      this.form   = {
+        title:       data.assignment.title       ?? '',
+        description: data.assignment.description ?? '',
+        dueDate:     data.assignment.dueDate     ?? '',
+      };
+    }
+  }
 
   onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
