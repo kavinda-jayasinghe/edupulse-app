@@ -70,6 +70,14 @@ export class ApiService {
     return this.http.get<any>(`${this.base}/teacher/${teacherId}/classes/${classId}`, { headers: this.headers() });
   }
 
+  updateTeacherClass(teacherId: number, classId: number, body: { name: string; classCode: string; subject: string }) {
+    return this.http.put<any>(`${this.base}/teacher/${teacherId}/classes/${classId}`, body, { headers: this.headers() });
+  }
+
+  deleteTeacherClass(teacherId: number, classId: number) {
+    return this.http.delete<any>(`${this.base}/teacher/${teacherId}/classes/${classId}`, { headers: this.headers() });
+  }
+
   addStudentToClass(teacherId: number, classId: number, mobile: string) {
     return this.http.post<any>(`${this.base}/teacher/${teacherId}/classes/${classId}/students`, { mobile }, { headers: this.headers() });
   }

@@ -1,12 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+export interface ClassDialogData {
+  mode: 'create' | 'edit';
+  class?: { id: number; name: string; classCode: string; subject: string };
+}
 
 @Component({
   selector: 'app-create-class-dialog',
@@ -18,10 +23,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ],
   template: `
     <div class="create-dialog">
-      <div class="dialog-icon-wrap">
-        <mat-icon>add_circle</mat-icon>
+      <div class="dialog-icon-wrap" [class.edit-mode]="isEdit">
+        <mat-icon>{{ isEdit ? 'edit' : 'add_circle' }}</mat-icon>
       </div>
-      <h2 mat-dialog-title>Create New Class</h2>
+      <h2 mat-dialog-title>{{ isEdit ? 'Edit Class' : 'Create New Class' }}</h2>
 
       <mat-dialog-content>
         <mat-form-field appearance="outline" class="full-w">
@@ -56,7 +61,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         <button mat-raised-button color="primary"
                 [disabled]="!form.name.trim() || !form.classCode.trim()"
                 [mat-dialog-close]="form">
-          <mat-icon>check</mat-icon> Create Class
+          <mat-icon>check</mat-icon> {{ isEdit ? 'Update Class' : 'Create Class' }}
         </button>
       </mat-dialog-actions>
     </div>
@@ -74,6 +79,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       margin: 0 auto 8px;
       mat-icon { font-size: 32px; height: 32px; width: 32px; color: #0369a1; }
     }
+    .dialog-icon-wrap.edit-mode {
+      background: #fef3c7;
+      mat-icon { color: #d97706; }
+    }
     h2[mat-dialog-title] {
       text-align: center; font-size: 18px; font-weight: 700; margin: 0 0 12px;
     }
@@ -89,8 +98,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class CreateClassDialogComponent {
   form = { name: '', classCode: '', subject: '' };
+  isEdit = false;
 
-  constructor() { this.generateCode(); }
+  constructor(@Inject(MAT_DIALOG_DATA) data: ClassDialogData | null) {
+    if (data?.mode === 'edit' && data.class) {
+      this.isEdit = true;
+      this.form   = { name: data.class.name, classCode: data.class.classCode, subject: data.class.subject ?? '' };
+    } else {
+      this.generateCode();
+    }
+  }
 
   generateCode() {
     const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

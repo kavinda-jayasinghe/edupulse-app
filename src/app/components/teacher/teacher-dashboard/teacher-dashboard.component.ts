@@ -15,7 +15,7 @@ import { map } from 'rxjs/operators';
 import { ApiService } from '../../../services/api.service';
 import { AuthService } from '../../../services/auth.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { CreateClassDialogComponent } from '../../../shared/components/create-class-dialog/create-class-dialog.component';
+import { ClassDialogData, CreateClassDialogComponent } from '../../../shared/components/create-class-dialog/create-class-dialog.component';
 import { AssignmentDialogComponent, AssignmentDialogResult } from '../../../shared/components/assignment-dialog/assignment-dialog.component';
 
 @Component({
@@ -99,21 +99,53 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   openCreateClassDialog() {
-    this.dialog.open(CreateClassDialogComponent, { width: '460px', disableClose: true })
+    const data: ClassDialogData = { mode: 'create' };
+    this.dialog.open(CreateClassDialogComponent, { width: '460px', disableClose: true, data })
       .afterClosed()
       .subscribe((result: any) => {
         if (!result) return;
         this.api.createTeacherClass(this.teacherId, result).subscribe({
-          next: (newClass) => {
-            this.loadOverview();
-            this.openClassDetail(newClass);
-          },
-          error: (err) => {
-            const msg = err?.error?.message ?? 'Could not create class.';
-            alert(msg);
-          },
+          next: (newClass) => { this.loadOverview(); this.openClassDetail(newClass); },
+          error: (err)    => alert(err?.error?.message ?? 'Could not create class.'),
         });
       });
+  }
+
+  editClass(cls: any) {
+    const data: ClassDialogData = { mode: 'edit', class: cls };
+    this.dialog.open(CreateClassDialogComponent, { width: '460px', disableClose: true, data })
+      .afterClosed()
+      .subscribe((result: any) => {
+        if (!result) return;
+        this.api.updateTeacherClass(this.teacherId, cls.id, result).subscribe({
+          next: () => {
+            this.loadOverview();
+            if (this.view === 'class-detail') this.refreshClassDetail();
+          },
+          error: (err) => alert(err?.error?.message ?? 'Could not update class.'),
+        });
+      });
+  }
+
+  confirmDeleteClass(cls: any) {
+    this.openConfirm({
+      title:        'Delete Class',
+      message:      `Delete "${cls.name}"?`,
+      detail:       'All assignments will be removed and students unenrolled.',
+      icon:         'delete_forever',
+      iconClass:    'icon-warn',
+      confirmLabel: 'Delete',
+      confirmColor: 'warn',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.api.deleteTeacherClass(this.teacherId, cls.id).subscribe({
+        next: () => {
+          if (this.view === 'class-detail') this.closeClassDetail();
+          else this.loadOverview();
+        },
+        error: (err) => alert(err?.error?.message ?? 'Could not delete class.'),
+      });
+    });
   }
 
   // ── Class detail ──────────────────────────────────────────

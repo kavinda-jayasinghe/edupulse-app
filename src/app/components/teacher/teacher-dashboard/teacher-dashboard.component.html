@@ -43,12 +43,6 @@
       </mat-card>
     </div>
 
-    <div class="section-header">
-      <h2 class="section-title"><mat-icon>list_alt</mat-icon> My Classes</h2>
-      <button mat-raised-button color="primary" (click)="openCreateClassDialog()">
-        <mat-icon>add</mat-icon> Create Class
-      </button>
-    </div>
 
     <div class="class-grid" *ngIf="classOverview.length > 0">
       <div class="class-tile" *ngFor="let cls of classOverview" (click)="openClassDetail(cls)">
@@ -63,7 +57,18 @@
             </span>
           </div>
         </div>
-        <mat-icon class="tile-arrow">chevron_right</mat-icon>
+        <div class="tile-actions">
+          <button mat-icon-button class="tile-action-btn"
+                  (click)="$event.stopPropagation(); editClass(cls)"
+                  matTooltip="Edit class">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="tile-action-btn tile-action-delete"
+                  (click)="$event.stopPropagation(); confirmDeleteClass(cls)"
+                  matTooltip="Delete class">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -100,6 +105,14 @@
               <mat-icon>subject</mat-icon> {{ classDetail.subject }}
             </span>
           </div>
+        </div>
+        <div class="detail-header-actions">
+          <button mat-stroked-button (click)="editClass(classDetail)" matTooltip="Edit class">
+            <mat-icon>edit</mat-icon> Edit
+          </button>
+          <button mat-stroked-button color="warn" (click)="confirmDeleteClass(classDetail)" matTooltip="Delete class">
+            <mat-icon>delete</mat-icon> Delete
+          </button>
         </div>
       </div>
 
