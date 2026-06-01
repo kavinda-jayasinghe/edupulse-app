@@ -126,6 +126,14 @@ export class ApiService {
     );
   }
 
+  createQuiz(formData: FormData) {
+    return this.http.post<any>(
+      `${this.base}/quiz`,
+      formData,
+      { headers: new HttpHeaders({ Authorization: `Bearer ${this.auth.getToken()}` }) }
+    );
+  }
+
   // ── Admin ─────────────────────────────────────────────────
   getAdminStats() {
     return this.http.get<any>(`${this.base}/admin/stats`, { headers: this.headers() });

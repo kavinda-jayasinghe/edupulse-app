@@ -1,0 +1,170 @@
+<div class="upload-paper-page">
+
+  <!-- Banner -->
+  <section class="up-banner">
+    <div class="up-banner-inner">
+      <button class="back-btn" routerLink="/teacher" matTooltip="Back to dashboard">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <div class="up-badge"><mat-icon>quiz</mat-icon> MCQ PAPERS</div>
+        <h1>Upload New <span class="highlight">Paper</span></h1>
+        <p class="up-sub">Paper file + answer sheet in one step</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="up-content">
+
+    <!-- ── Success state ─────────────────────────────────── -->
+    <div class="success-card" *ngIf="result">
+      <div class="success-icon"><mat-icon>check_circle</mat-icon></div>
+      <div class="success-info">
+        <h2>Paper uploaded successfully!</h2>
+        <div class="success-meta">
+          <span><mat-icon>class</mat-icon> {{ result.className }}</span>
+          <span><mat-icon>title</mat-icon> {{ result.title }}</span>
+          <span><mat-icon>timer</mat-icon> {{ result.timeDuration }} min</span>
+          <span><mat-icon>quiz</mat-icon> {{ result.answerCount }} questions</span>
+          <span *ngIf="result.dueDate"><mat-icon>event</mat-icon> Due {{ result.dueDate }}</span>
+        </div>
+      </div>
+      <button class="upload-another-btn" (click)="reset()">
+        <mat-icon>upload_file</mat-icon> Upload Another
+      </button>
+    </div>
+
+    <!-- ── Form ──────────────────────────────────────────── -->
+    <ng-container *ngIf="!result">
+
+      <!-- Paper details -->
+      <div class="form-section">
+        <div class="section-label"><mat-icon>info</mat-icon> Paper Details</div>
+
+        <!-- Class selector -->
+        <div class="field-wrap" style="margin-bottom:14px">
+          <label class="field-label">Class <span class="req">*</span></label>
+          <div class="select-wrap">
+            <mat-icon class="select-icon">class</mat-icon>
+            <select class="text-input select-input" [(ngModel)]="selectedClassId"
+                    [disabled]="classesLoading">
+              <option [ngValue]="null" disabled>
+                {{ classesLoading ? 'Loading classes…' : 'Select a class' }}
+              </option>
+              <option *ngFor="let cls of classes" [ngValue]="cls.id">{{ cls.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fields-row">
+          <div class="field-wrap field-grow">
+            <label class="field-label">Title <span class="req">*</span></label>
+            <input class="text-input" type="text" [(ngModel)]="title" (input)="onTitleInput()"
+                   placeholder="e.g. Biology Paper 1">
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Duration (min) <span class="req">*</span></label>
+            <input class="text-input" type="number" [(ngModel)]="timeDuration" min="1" placeholder="60">
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Due Date</label>
+            <input class="text-input" type="date" [(ngModel)]="dueDate">
+          </div>
+        </div>
+        <div class="field-wrap" style="margin-top:12px">
+          <label class="field-label">Instructions <span class="optional">(optional)</span></label>
+          <textarea class="text-input textarea-input" [(ngModel)]="instruction" rows="3"
+                    placeholder="Any special instructions for students…"></textarea>
+        </div>
+      </div>
+
+      <!-- File uploads -->
+      <div class="files-row">
+
+        <!-- Paper file -->
+        <div class="file-section">
+          <div class="section-label"><mat-icon>picture_as_pdf</mat-icon> Paper File <span class="req">*</span></div>
+
+          <div *ngIf="!paperFile"
+               class="drop-zone" [class.dragover]="paperDragOver"
+               (dragover)="onPaperDragOver($event)" (dragleave)="onPaperDragLeave()" (drop)="onPaperDrop($event)"
+               (click)="paperInput.click()">
+            <mat-icon class="dz-icon">upload_file</mat-icon>
+            <p>Drag &amp; drop or <span class="browse-link">browse</span></p>
+            <p class="dz-hint">PDF, images supported</p>
+            <input #paperInput type="file" accept=".pdf,image/*" hidden (change)="onPaperSelected($event)">
+          </div>
+
+          <div class="file-preview-box" *ngIf="paperFile">
+            <div class="file-preview-header">
+              <mat-icon class="fph-icon">{{ paperIsImage ? 'image' : 'picture_as_pdf' }}</mat-icon>
+              <div class="fph-info">
+                <div class="fph-name" [title]="paperFile.name">{{ paperFile.name }}</div>
+                <div class="fph-size">{{ formatSize(paperFile.size) }}</div>
+              </div>
+              <button class="fph-remove" (click)="removePaper()" matTooltip="Remove">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <!-- Preview -->
+            <img *ngIf="paperIsImage && paperPreview" [src]="paperPreview" class="paper-img-preview" alt="preview">
+            <iframe *ngIf="!paperIsImage && paperPreview" [src]="paperPreview" class="paper-pdf-preview" frameborder="0"></iframe>
+          </div>
+        </div>
+
+        <!-- Answer sheet -->
+        <div class="file-section">
+          <div class="section-label"><mat-icon>table_chart</mat-icon> Answer Sheet (Excel) <span class="req">*</span></div>
+
+          <div *ngIf="!excelFile"
+               class="drop-zone excel-zone" [class.dragover]="excelDragOver"
+               (dragover)="onExcelDragOver($event)" (dragleave)="onExcelDragLeave()" (drop)="onExcelDrop($event)"
+               (click)="excelInput.click()">
+            <mat-icon class="dz-icon">table_chart</mat-icon>
+            <p>Drag &amp; drop or <span class="browse-link">browse</span></p>
+            <p class="dz-hint">.xlsx — columns: <strong>question</strong>, <strong>answer</strong></p>
+            <div class="excel-sample">
+              <div class="es-row es-header"><span>question</span><span>answer</span></div>
+              <div class="es-row"><span>1</span><span>A</span></div>
+              <div class="es-row"><span>2</span><span>C</span></div>
+              <div class="es-row es-fade"><span>…</span><span>…</span></div>
+            </div>
+            <input #excelInput type="file" accept=".xlsx,.xls" hidden (change)="onExcelSelected($event)">
+          </div>
+
+          <div class="file-preview-box" *ngIf="excelFile">
+            <div class="file-preview-header">
+              <mat-icon class="fph-icon excel-icon">table_chart</mat-icon>
+              <div class="fph-info">
+                <div class="fph-name" [title]="excelFile.name">{{ excelFile.name }}</div>
+                <div class="fph-size">{{ formatSize(excelFile.size) }}</div>
+              </div>
+              <button class="fph-remove" (click)="removeExcel()" matTooltip="Remove">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <div class="excel-ready">
+              <mat-icon>check_circle</mat-icon>
+              <span>Answer sheet ready — will be parsed on upload</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="upload-error" *ngIf="uploadError">
+        <mat-icon>error_outline</mat-icon> {{ uploadError }}
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-row">
+        <button class="submit-btn" (click)="submit()" [disabled]="!canSubmit">
+          <mat-spinner *ngIf="uploading" diameter="18"></mat-spinner>
+          <mat-icon *ngIf="!uploading">cloud_upload</mat-icon>
+          <span>{{ uploading ? 'Uploading…' : 'Upload Paper' }}</span>
+        </button>
+      </div>
+
+    </ng-container>
+  </div>
+</div>

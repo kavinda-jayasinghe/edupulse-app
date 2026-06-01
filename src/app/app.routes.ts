@@ -10,7 +10,8 @@ export const routes: Routes = [
 
   // ── Admin route ───────────────────────────────────────────
   { path: 'admin',   loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent),     canActivate: [adminGuard] },
-  { path: 'teacher', loadComponent: () => import('./pages/teacher/teacher.component').then(m => m.TeacherComponent), canActivate: [teacherGuard] },
+  { path: 'teacher',        loadComponent: () => import('./pages/teacher/teacher.component').then(m => m.TeacherComponent),                         canActivate: [teacherGuard] },
+  { path: 'upload-paper',  loadComponent: () => import('./components/exams/upload-paper/upload-paper.component').then(m => m.UploadPaperComponent), canActivate: [teacherGuard] },
 
   // ── Protected dashboard routes ────────────────────────────
   { path: 'home',          loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent),                  canActivate: [authGuard] },

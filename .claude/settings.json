@@ -7,7 +7,8 @@
       "Bash(Sort-Object FullName)",
       "Bash(./mvnw.cmd compile *)",
       "Bash(./mvnw.cmd clean *)",
-      "Bash(Get-Content \"d:\\\\PROJECT_1\\\\front-end\\\\src\\\\app\\\\components\\\\teacher\\\\teacher-dashboard\\\\teacher-dashboard.component.html\")"
+      "Bash(Get-Content \"d:\\\\PROJECT_1\\\\front-end\\\\src\\\\app\\\\components\\\\teacher\\\\teacher-dashboard\\\\teacher-dashboard.component.html\")",
+      "Bash(findstr mapper *)"
     ],
     "additionalDirectories": [
       "D:\\PROJECT_1\\edu-pulse-server",
