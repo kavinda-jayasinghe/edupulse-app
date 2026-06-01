@@ -134,6 +134,23 @@ export class ApiService {
     );
   }
 
+  getQuizzesByClass(classId: number) {
+    return this.http.get<any[]>(`${this.base}/quiz/class/${classId}`, { headers: this.headers() });
+  }
+
+  getQuizPaperBlob(quizId: number) {
+    return this.http.get(`${this.base}/quiz/${quizId}/paper`,
+      { headers: this.headers(), responseType: 'blob' as 'json' }) as any;
+  }
+
+  updateQuiz(quizId: number, teacherId: number, body: { title: string; instruction: string; timeDuration: number; dueDate: string }) {
+    return this.http.put<any>(`${this.base}/quiz/${quizId}?teacherId=${teacherId}`, body, { headers: this.headers() });
+  }
+
+  deleteQuiz(quizId: number, teacherId: number) {
+    return this.http.delete<void>(`${this.base}/quiz/${quizId}?teacherId=${teacherId}`, { headers: this.headers() });
+  }
+
   // ── Admin ─────────────────────────────────────────────────
   getAdminStats() {
     return this.http.get<any>(`${this.base}/admin/stats`, { headers: this.headers() });

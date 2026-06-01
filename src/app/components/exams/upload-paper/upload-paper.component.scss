@@ -309,3 +309,120 @@
   }
   &:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
 }
+
+/* ── Published quizzes section ────────────────────────── */
+.quiz-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .quiz-count { font-weight: 400; color: #9ca3af; font-size: 12px; margin-left: 4px; }
+}
+
+.no-quizzes {
+  display: flex; align-items: center; gap: 8px;
+  padding: 20px; border-radius: 10px; background: white;
+  color: rgba(0,0,0,0.38); font-size: 13px;
+  mat-icon { font-size: 18px; height: 18px; width: 18px; }
+}
+
+/* ── Quiz card ────────────────────────────────────────── */
+.quiz-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover { border-color: #c4b5fd; box-shadow: 0 2px 10px rgba(124,58,237,0.08); }
+}
+
+.qc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+
+  .qc-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: #ede9fe; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    mat-icon { color: #7c3aed; font-size: 18px; height: 18px; width: 18px; }
+  }
+
+  .qc-info { flex: 1; min-width: 0; }
+
+  .qc-title {
+    font-size: 14px; font-weight: 600; color: #1e293b;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+
+  .qc-meta {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    font-size: 11px; color: rgba(0,0,0,0.45);
+
+    span { display: inline-flex; align-items: center; gap: 2px;
+      mat-icon { font-size: 11px; height: 11px; width: 11px; } }
+
+    .due { color: #b45309; font-weight: 600; }
+  }
+}
+
+.qc-actions {
+  display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+}
+
+.qc-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border: none; background: transparent;
+  border-radius: 6px; cursor: pointer; color: #9ca3af;
+  transition: color 0.15s, background 0.15s;
+  mat-icon { font-size: 16px; height: 16px; width: 16px; }
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+.qc-view   { &:hover:not(:disabled) { color: #4f46e5; background: rgba(79,70,229,0.08); } }
+.qc-edit   { &:hover:not(:disabled) { color: #d97706; background: rgba(217,119,6,0.08); } }
+.qc-delete { &:hover:not(:disabled) { color: #dc2626; background: rgba(220,38,38,0.08); } }
+
+/* ── Inline edit form ─────────────────────────────────── */
+.qc-edit-form {
+  padding: 14px 16px 16px;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+
+.qef-row {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start;
+  .field-grow { flex: 1; min-width: 160px; }
+}
+
+.qef-actions {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 8px; margin-top: 10px;
+}
+
+.inline-err { flex: 1; margin: 0; font-size: 12px; color: #dc2626; }
+
+.qef-cancel {
+  padding: 6px 14px; border-radius: 7px; border: 1.5px solid #e5e7eb;
+  background: white; color: #374151; font-size: 13px; cursor: pointer;
+  &:hover:not(:disabled) { background: #f9fafb; }
+  &:disabled { opacity: 0.5; }
+}
+
+.qef-save {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 16px; border-radius: 7px; border: none;
+  background: #7c3aed; color: white; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+  mat-icon { font-size: 15px; height: 15px; width: 15px; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+  &:disabled { opacity: 0.5; cursor: default; }
+}

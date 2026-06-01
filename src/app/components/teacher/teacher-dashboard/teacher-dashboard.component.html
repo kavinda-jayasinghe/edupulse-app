@@ -124,14 +124,14 @@
             </span>
           </div>
         </div>
-        <div class="detail-header-actions">
+        <!-- <div class="detail-header-actions">
           <button mat-stroked-button (click)="editClass(classDetail)" matTooltip="Edit class">
             <mat-icon>edit</mat-icon> Edit
           </button>
           <button mat-stroked-button color="warn" (click)="confirmDeleteClass(classDetail)" matTooltip="Delete class">
             <mat-icon>delete</mat-icon> Delete
           </button>
-        </div>
+        </div> -->
       </div>
 
       <mat-card class="section-card">
@@ -143,8 +143,9 @@
             Assignments <span class="count-chip">{{ filteredAssignments.length }}</span>
           </mat-card-title>
           <div class="card-hdr-action">
-            <button mat-stroked-button (click)="openAssignmentDialog()" [disabled]="addAssignmentLoading">
-              <mat-icon>add</mat-icon> New Assignment
+            <button class="new-asgn-btn" (click)="openAssignmentDialog()" [disabled]="addAssignmentLoading">
+              <mat-icon>add</mat-icon>
+              <span>New Assignment</span>
             </button>
           </div>
         </mat-card-header>
@@ -180,7 +181,7 @@
           </div>
 
           <!-- Assignment list -->
-          <div class="assignment-list" *ngIf="pagedAssignments.length > 0">
+          <div class="assignment-list">
             <div class="assignment-item" *ngFor="let a of pagedAssignments">
               <div class="asgn-icon"><mat-icon>description</mat-icon></div>
               <div class="asgn-body">
@@ -210,11 +211,12 @@
                 </button>
               </div>
             </div>
+
           </div>
 
-          <div class="no-data" *ngIf="filteredAssignments.length === 0">
-            <mat-icon>{{ classDetail.assignments?.length === 0 ? 'assignment_late' : 'search_off' }}</mat-icon>
-            <span>{{ classDetail.assignments?.length === 0 ? 'No assignments yet.' : 'No assignments match the filter.' }}</span>
+          <div class="no-data small" *ngIf="filteredAssignments.length === 0 && assignmentDateFrom">
+            <mat-icon>search_off</mat-icon>
+            <span>No assignments match the filter.</span>
           </div>
 
         </mat-card-content>

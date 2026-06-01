@@ -47,6 +47,7 @@
           <div class="select-wrap">
             <mat-icon class="select-icon">class</mat-icon>
             <select class="text-input select-input" [(ngModel)]="selectedClassId"
+                    (ngModelChange)="onClassChange()"
                     [disabled]="classesLoading">
               <option [ngValue]="null" disabled>
                 {{ classesLoading ? 'Loading classes…' : 'Select a class' }}
@@ -166,5 +167,88 @@
       </div>
 
     </ng-container>
+
+    <!-- ── Published quizzes for selected class ──────────── -->
+    <div class="quiz-list-section" *ngIf="selectedClassId">
+
+      <div class="quiz-list-header">
+        <div class="section-label" style="margin:0">
+          <mat-icon>assignment_turned_in</mat-icon>
+          Published Papers
+          <span class="quiz-count" *ngIf="!quizzesLoading">({{ quizzes.length }})</span>
+        </div>
+        <mat-spinner *ngIf="quizzesLoading" diameter="20"></mat-spinner>
+      </div>
+
+      <div class="no-quizzes" *ngIf="!quizzesLoading && quizzes.length === 0">
+        <mat-icon>inbox</mat-icon> No papers published for this class yet.
+      </div>
+
+      <div class="quiz-card" *ngFor="let q of quizzes">
+
+        <!-- Card header row -->
+        <div class="qc-header">
+          <div class="qc-icon"><mat-icon>description</mat-icon></div>
+          <div class="qc-info">
+            <div class="qc-title">{{ q.title }}</div>
+            <div class="qc-meta">
+              <span><mat-icon>timer</mat-icon> {{ q.timeDuration }} min</span>
+              <span><mat-icon>quiz</mat-icon> {{ q.answerCount }} questions</span>
+              <span *ngIf="q.dueDate" class="due"><mat-icon>event</mat-icon> Due {{ q.dueDate }}</span>
+              <span class="created"><mat-icon>calendar_today</mat-icon> {{ q.createdAt }}</span>
+            </div>
+          </div>
+          <div class="qc-actions">
+            <button class="qc-btn qc-view" (click)="viewPaper(q)"
+                    [disabled]="viewingQuizId === q.id" matTooltip="View paper">
+              <mat-spinner *ngIf="viewingQuizId === q.id" diameter="14"></mat-spinner>
+              <mat-icon *ngIf="viewingQuizId !== q.id">visibility</mat-icon>
+            </button>
+            <button class="qc-btn qc-edit" (click)="editingQuizId === q.id ? cancelEdit() : startEdit(q)"
+                    matTooltip="{{ editingQuizId === q.id ? 'Cancel' : 'Edit' }}">
+              <mat-icon>{{ editingQuizId === q.id ? 'close' : 'edit' }}</mat-icon>
+            </button>
+            <button class="qc-btn qc-delete" (click)="confirmDeleteQuiz(q)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline edit form -->
+        <div class="qc-edit-form" *ngIf="editingQuizId === q.id">
+          <div class="qef-row">
+            <div class="field-wrap field-grow">
+              <label class="field-label">Title <span class="req">*</span></label>
+              <input class="text-input" [(ngModel)]="editForm.title" placeholder="Title">
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Duration (min) <span class="req">*</span></label>
+              <input class="text-input" type="number" [(ngModel)]="editForm.timeDuration" min="1">
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">Due Date</label>
+              <input class="text-input" type="date" [(ngModel)]="editForm.dueDate">
+            </div>
+          </div>
+          <div class="field-wrap" style="margin-top:8px">
+            <label class="field-label">Instructions</label>
+            <textarea class="text-input textarea-input" [(ngModel)]="editForm.instruction" rows="2"
+                      placeholder="Optional instructions…"></textarea>
+          </div>
+          <div class="qef-actions">
+            <p class="inline-err" *ngIf="editError">{{ editError }}</p>
+            <button class="qef-cancel" (click)="cancelEdit()" [disabled]="editSaving">Cancel</button>
+            <button class="qef-save" (click)="saveEdit(q)"
+                    [disabled]="!editForm.title.trim() || !editForm.timeDuration || editSaving">
+              <mat-spinner *ngIf="editSaving" diameter="14"></mat-spinner>
+              <mat-icon *ngIf="!editSaving">check</mat-icon>
+              {{ editSaving ? 'Saving…' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>

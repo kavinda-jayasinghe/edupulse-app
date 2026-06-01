@@ -31,14 +31,95 @@ export class UploadPaperComponent implements OnInit {
 
   // ── Classes ───────────────────────────────────────────────
   classes: { id: number; name: string }[] = [];
-  classesLoading = true;
+  classesLoading  = true;
   selectedClassId: number | null = null;
+
+  // ── Published quizzes for selected class ──────────────────
+  quizzes: any[]  = [];
+  quizzesLoading  = false;
+
+  // ── Inline edit ───────────────────────────────────────────
+  editingQuizId: number | null = null;
+  editForm = { title: '', instruction: '', timeDuration: null as number | null, dueDate: '' };
+  editSaving   = false;
+  editError    = '';
+
+  // ── Paper viewer ──────────────────────────────────────────
+  viewingQuizId: number | null = null;
 
   ngOnInit() {
     const teacherId = this.auth.getUser()?.id ?? 0;
     this.api.getTeacherOverview(teacherId).subscribe({
       next: data => { this.classes = data.classes ?? []; this.classesLoading = false; },
       error: ()   => { this.classesLoading = false; },
+    });
+  }
+
+  onClassChange() {
+    this.quizzes = [];
+    this.editingQuizId = null;
+    if (!this.selectedClassId) return;
+    this.quizzesLoading = true;
+    this.api.getQuizzesByClass(this.selectedClassId).subscribe({
+      next: list => { this.quizzes = list; this.quizzesLoading = false; },
+      error: ()  => { this.quizzesLoading = false; },
+    });
+  }
+
+  // ── Quiz list actions ─────────────────────────────────────
+
+  viewPaper(quiz: any) {
+    this.viewingQuizId = quiz.id;
+    this.api.getQuizPaperBlob(quiz.id).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        this.viewingQuizId = null;
+      },
+      error: () => { this.viewingQuizId = null; },
+    });
+  }
+
+  startEdit(quiz: any) {
+    this.editingQuizId = quiz.id;
+    this.editForm = {
+      title:        quiz.title,
+      instruction:  quiz.instruction ?? '',
+      timeDuration: quiz.timeDuration,
+      dueDate:      quiz.dueDate ?? '',
+    };
+    this.editError = '';
+  }
+
+  cancelEdit() { this.editingQuizId = null; this.editError = ''; }
+
+  saveEdit(quiz: any) {
+    if (!this.editForm.title.trim() || !this.editForm.timeDuration) return;
+    this.editSaving = true;
+    this.editError  = '';
+    const teacherId = this.auth.getUser()?.id ?? 0;
+    this.api.updateQuiz(quiz.id, teacherId, {
+      title:        this.editForm.title,
+      instruction:  this.editForm.instruction,
+      timeDuration: this.editForm.timeDuration!,
+      dueDate:      this.editForm.dueDate,
+    }).subscribe({
+      next: (updated: any) => {
+        const idx = this.quizzes.findIndex(q => q.id === quiz.id);
+        if (idx >= 0) this.quizzes[idx] = updated;
+        this.editingQuizId = null;
+        this.editSaving    = false;
+      },
+      error: (err: any) => { this.editError = err?.error?.message ?? 'Update failed.'; this.editSaving = false; },
+    });
+  }
+
+  confirmDeleteQuiz(quiz: any) {
+    if (!confirm(`Delete "${quiz.title}"? This cannot be undone.`)) return;
+    const teacherId = this.auth.getUser()?.id ?? 0;
+    this.api.deleteQuiz(quiz.id, teacherId).subscribe({
+      next: () => { this.quizzes = this.quizzes.filter(q => q.id !== quiz.id); },
+      error: (err: any) => { alert(err?.error?.message ?? 'Could not delete quiz.'); },
     });
   }
 
