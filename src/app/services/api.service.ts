@@ -14,6 +14,14 @@ export class ApiService {
   }
 
   // ── Dashboard ─────────────────────────────────────────────
+  joinClass(studentId: number, classCode: string) {
+    return this.http.post<{ className: string; message: string }>(
+      `${this.base}/users/${studentId}/join-class`,
+      { classCode },
+      { headers: this.headers() }
+    );
+  }
+
   getDashboard(studentId: number) {
     return this.http.get<any>(`${this.base}/users/${studentId}/dashboard`, { headers: this.headers() });
   }

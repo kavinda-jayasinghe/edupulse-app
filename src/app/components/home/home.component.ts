@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -15,7 +16,7 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-home',
   standalone: true,
   imports: [
-    CommonModule, RouterLink,
+    CommonModule, FormsModule, RouterLink,
     MatCardModule, MatButtonModule, MatIconModule,
     MatTableModule, MatProgressBarModule, MatDividerModule,
     MatProgressSpinnerModule,
@@ -43,6 +44,33 @@ export class HomeComponent implements OnInit {
   topRankings: any[]   = [];
 
   displayedColumns = ['title', 'score', 'rank', 'date'];
+
+  // ── Join Class ────────────────────────────────────────────
+  classCode    = '';
+  joining      = false;
+  joinError    = '';
+  joinSuccess  = '';
+
+  joinClass() {
+    const code = this.classCode.trim().toUpperCase();
+    if (!code) return;
+    this.joining     = true;
+    this.joinError   = '';
+    this.joinSuccess = '';
+    const studentId  = this.auth.getUser()?.id ?? 0;
+    this.api.joinClass(studentId, code).subscribe({
+      next: (res) => {
+        this.joinSuccess = res.message;
+        this.classCode   = '';
+        this.joining     = false;
+        setTimeout(() => this.joinSuccess = '', 4000);
+      },
+      error: (err) => {
+        this.joinError = err?.error?.message ?? 'Could not join class.';
+        this.joining   = false;
+      },
+    });
+  }
 
   get dotsProgress(): number {
     return Math.min((this.totalDots / this.maxDots) * 100, 100);
