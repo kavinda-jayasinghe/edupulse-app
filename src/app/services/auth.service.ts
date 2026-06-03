@@ -41,4 +41,10 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  updateUserCache(partial: { name?: string; mobile?: string }) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const user = this.getUser();
+    if (user) localStorage.setItem('user', JSON.stringify({ ...user, ...partial }));
+  }
 }

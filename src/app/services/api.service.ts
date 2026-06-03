@@ -30,6 +30,23 @@ export class ApiService {
     return this.http.get<any>(`${this.base}/users/${studentId}/profile`, { headers: this.headers() });
   }
 
+  updateProfile(userId: number, body: { name: string; mobile: string }) {
+    return this.http.put<{ id: number; name: string; mobile: string }>(
+      `${this.base}/users/${userId}/profile`, body, { headers: this.headers() });
+  }
+
+  verifyPassword(userId: number, password: string) {
+    return this.http.post<void>(
+      `${this.base}/users/${userId}/verify-password`, { password }, { headers: this.headers() });
+  }
+
+  changePassword(userId: number, currentPassword: string, newPassword: string) {
+    return this.http.put<void>(
+      `${this.base}/users/${userId}/password`,
+      { currentPassword, newPassword },
+      { headers: this.headers() });
+  }
+
   // ── Exams ─────────────────────────────────────────────────
   getStudentExams(studentId: number) {
     return this.http.get<any[]>(`${this.base}/exams/student/${studentId}`, { headers: this.headers() });

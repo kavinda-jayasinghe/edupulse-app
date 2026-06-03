@@ -1,1 +1,168 @@
-<p>profile works!</p>
+<div class="profile-page">
+
+  <!-- Banner -->
+  <section class="profile-banner">
+    <div class="profile-banner-inner">
+      <div class="avatar-circle">{{ userInitial }}</div>
+      <div class="banner-info" *ngIf="profile">
+        <h1>{{ profile.name }}</h1>
+        <div class="banner-meta">
+          <span class="role-badge">{{ profile.profileType }}</span>
+          <span class="meta-item"><mat-icon>phone</mat-icon> {{ profile.mobile }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="center-spin" *ngIf="loading">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <div class="profile-content" *ngIf="!loading && profile">
+
+    <!-- ── Personal Information ── -->
+    <div class="profile-card">
+      <div class="card-header">
+        <mat-icon class="card-header-icon">person</mat-icon>
+        <span>Personal Information</span>
+      </div>
+
+      <!-- Name field -->
+      <div class="field-row">
+        <div class="field-label-wrap">
+          <span class="field-label">Full Name</span>
+        </div>
+        <div class="field-value-wrap">
+          <ng-container *ngIf="!editName">
+            <span class="field-value">{{ profile.name }}</span>
+            <button class="edit-btn" (click)="startEditName()" matTooltip="Edit name">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="editName">
+            <input class="field-input" type="text" [(ngModel)]="nameValue"
+                   placeholder="Full name" (keydown.enter)="saveName()" (keydown.escape)="cancelEditName()">
+            <button class="save-btn" (click)="saveName()" [disabled]="!nameValue.trim() || nameSaving">
+              <mat-spinner *ngIf="nameSaving" diameter="14"></mat-spinner>
+              <mat-icon *ngIf="!nameSaving">check</mat-icon>
+            </button>
+            <button class="cancel-btn" (click)="cancelEditName()" [disabled]="nameSaving">
+              <mat-icon>close</mat-icon>
+            </button>
+          </ng-container>
+        </div>
+        <div class="field-msg success" *ngIf="nameSuccess"><mat-icon>check_circle</mat-icon> {{ nameSuccess }}</div>
+        <div class="field-msg error"   *ngIf="nameError"><mat-icon>error_outline</mat-icon> {{ nameError }}</div>
+      </div>
+
+      <div class="field-divider"></div>
+
+      <!-- Mobile field -->
+      <div class="field-row">
+        <div class="field-label-wrap">
+          <span class="field-label">Mobile Number</span>
+        </div>
+        <div class="field-value-wrap">
+          <ng-container *ngIf="!editMobile">
+            <span class="field-value mono">{{ profile.mobile }}</span>
+            <button class="edit-btn" (click)="startEditMobile()" matTooltip="Edit mobile">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="editMobile">
+            <input class="field-input mono" type="tel" [(ngModel)]="mobileValue"
+                   placeholder="Mobile number" (keydown.enter)="saveMobile()" (keydown.escape)="cancelEditMobile()">
+            <button class="save-btn" (click)="saveMobile()" [disabled]="!mobileValue.trim() || mobileSaving">
+              <mat-spinner *ngIf="mobileSaving" diameter="14"></mat-spinner>
+              <mat-icon *ngIf="!mobileSaving">check</mat-icon>
+            </button>
+            <button class="cancel-btn" (click)="cancelEditMobile()" [disabled]="mobileSaving">
+              <mat-icon>close</mat-icon>
+            </button>
+          </ng-container>
+        </div>
+        <div class="field-msg success" *ngIf="mobileSuccess"><mat-icon>check_circle</mat-icon> {{ mobileSuccess }}</div>
+        <div class="field-msg error"   *ngIf="mobileError"><mat-icon>error_outline</mat-icon> {{ mobileError }}</div>
+      </div>
+    </div>
+
+    <!-- ── Change Password ── -->
+    <div class="profile-card">
+      <div class="card-header">
+        <mat-icon class="card-header-icon">lock</mat-icon>
+        <span>Change Password</span>
+      </div>
+
+      <div class="password-success" *ngIf="passwordSuccess">
+        <mat-icon>check_circle</mat-icon> {{ passwordSuccess }}
+      </div>
+
+      <!-- Step 1: Verify current password -->
+      <div class="pw-step" [class.pw-step-done]="passwordVerified">
+        <div class="pw-step-label">
+          <span class="step-num" [class.done]="passwordVerified">
+            <mat-icon *ngIf="passwordVerified">check</mat-icon>
+            <span *ngIf="!passwordVerified">1</span>
+          </span>
+          <span>Verify current password</span>
+        </div>
+        <div class="pw-input-row" *ngIf="!passwordVerified">
+          <div class="pw-input-wrap">
+            <input class="field-input" [type]="showCurrentPw ? 'text' : 'password'"
+                   [(ngModel)]="currentPassword" placeholder="Current password"
+                   (keydown.enter)="verifyCurrentPassword()">
+            <button class="pw-toggle" (click)="showCurrentPw = !showCurrentPw" matTooltip="Toggle visibility">
+              <mat-icon>{{ showCurrentPw ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <button class="verify-btn" (click)="verifyCurrentPassword()"
+                  [disabled]="!currentPassword || verifying">
+            <mat-spinner *ngIf="verifying" diameter="15"></mat-spinner>
+            <span>{{ verifying ? 'Verifying…' : 'Verify' }}</span>
+          </button>
+        </div>
+        <div class="field-msg error" *ngIf="verifyError"><mat-icon>error_outline</mat-icon> {{ verifyError }}</div>
+      </div>
+
+      <!-- Step 2: New password (visible after verify) -->
+      <div class="pw-step" [class.pw-step-locked]="!passwordVerified">
+        <div class="pw-step-label">
+          <span class="step-num" [class.active]="passwordVerified">2</span>
+          <span>Set new password</span>
+        </div>
+
+        <ng-container *ngIf="passwordVerified">
+          <div class="pw-input-wrap" style="margin-top:10px">
+            <input class="field-input" [type]="showNewPw ? 'text' : 'password'"
+                   [(ngModel)]="newPassword" placeholder="New password (min 6 chars)"
+                   (ngModelChange)="passwordError = ''">
+            <button class="pw-toggle" (click)="showNewPw = !showNewPw">
+              <mat-icon>{{ showNewPw ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <div class="pw-input-wrap" style="margin-top:8px">
+            <input class="field-input" [type]="showConfirmPw ? 'text' : 'password'"
+                   [(ngModel)]="confirmPassword" placeholder="Confirm new password"
+                   (ngModelChange)="passwordError = ''" (keydown.enter)="changePassword()">
+            <button class="pw-toggle" (click)="showConfirmPw = !showConfirmPw">
+              <mat-icon>{{ showConfirmPw ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <div class="field-msg error" *ngIf="passwordError"><mat-icon>error_outline</mat-icon> {{ passwordError }}</div>
+          <div class="pw-actions">
+            <button class="change-pw-btn" (click)="changePassword()"
+                    [disabled]="!newPassword || !confirmPassword || changingPassword">
+              <mat-spinner *ngIf="changingPassword" diameter="15"></mat-spinner>
+              <mat-icon *ngIf="!changingPassword">lock_reset</mat-icon>
+              <span>{{ changingPassword ? 'Updating…' : 'Update Password' }}</span>
+            </button>
+            <button class="reset-link" (click)="resetPasswordForm()">Start over</button>
+          </div>
+        </ng-container>
+
+        <p class="step-hint" *ngIf="!passwordVerified">Complete step 1 first</p>
+      </div>
+    </div>
+
+  </div>
+</div>

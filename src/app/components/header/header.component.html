@@ -66,7 +66,6 @@
       <strong>{{ userName }}</strong>
       <small *ngIf="isAdmin"   class="admin-label">Administrator</small>
       <small *ngIf="isTeacher" class="teacher-label">Teacher</small>
-      <small *ngIf="!isAdmin && !isTeacher">{{ userClass }}</small>
     </div>
     <mat-divider></mat-divider>
     <button mat-menu-item routerLink="/profile">
