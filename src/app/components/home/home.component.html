@@ -48,5 +48,20 @@
   </div>
 
   <div class="content" *ngIf="!loading">
+
+    <!-- ── Enrolled Classes ── -->
+    <div class="classes-section" *ngIf="enrolledClasses.length > 0">
+      <div class="section-label">
+        <mat-icon>class</mat-icon> My Classes
+        <span class="class-count">{{ enrolledClasses.length }}</span>
+      </div>
+      <div class="class-cards">
+        <div class="class-card" *ngFor="let cls of enrolledClasses">
+          <div class="cc-icon"><mat-icon>school</mat-icon></div>
+          <span class="cc-name">{{ cls.name }}</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

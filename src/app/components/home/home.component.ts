@@ -40,8 +40,9 @@ export class HomeComponent implements OnInit {
   maxDots      = 500;
 
   dotsArray: boolean[] = [];
-  recentExams: any[]   = [];
-  topRankings: any[]   = [];
+  recentExams: any[]      = [];
+  topRankings: any[]      = [];
+  enrolledClasses: any[]  = [];
 
   displayedColumns = ['title', 'score', 'rank', 'date'];
 
@@ -63,6 +64,9 @@ export class HomeComponent implements OnInit {
         this.joinSuccess = res.message;
         this.classCode   = '';
         this.joining     = false;
+        if (!this.enrolledClasses.some(c => c.name === res.className)) {
+          this.enrolledClasses.push({ name: res.className });
+        }
         setTimeout(() => this.joinSuccess = '', 4000);
       },
       error: (err) => {
@@ -88,14 +92,15 @@ export class HomeComponent implements OnInit {
 
     this.api.getDashboard(studentId).subscribe({
       next: data => {
-        this.studentName  = data.student.name;
-        this.totalExams   = data.totalExams;
-        this.totalScore   = data.totalScore;
-        this.currentRank  = data.currentRank;
-        this.totalDots    = data.totalDots;
-        this.recentExams  = data.recentExams;
-        this.dotsArray    = Array(this.maxDots).fill(false).map((_, i) => i < this.totalDots);
-        this.loading      = false;
+        this.studentName      = data.student.name;
+        this.totalExams       = data.totalExams;
+        this.totalScore       = data.totalScore;
+        this.currentRank      = data.currentRank;
+        this.totalDots        = data.totalDots;
+        this.recentExams      = data.recentExams;
+        this.enrolledClasses  = data.student.classes ?? [];
+        this.dotsArray        = Array(this.maxDots).fill(false).map((_, i) => i < this.totalDots);
+        this.loading          = false;
       },
       error: () => {
         this.error   = 'Could not load dashboard. Is the backend running?';
